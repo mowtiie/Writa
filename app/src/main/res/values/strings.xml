@@ -1,3 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Writa</string>
+    <string name="note_conflict_copy_title">%1$s (conflict copy)</string>
+
+    <string name="setup_title">Server Setup</string>
+    <string name="setup_description">Create a free Supabase project, run the setup SQL from the README, then paste your Project URL and publishable (anon) key below.</string>
+    <string name="setup_url_label">Server URL</string>
+    <string name="setup_key_label">Publishable key</string>
+    <string name="setup_connect">Connect</string>
+    <string name="setup_connecting">Connecting</string>
+
+    <string name="app_slogan">Your notes. Your server. Your rules.</string>
+    <string name="login_email_label">Email</string>
+    <string name="login_password_label">Password</string>
+    <string name="login_show_password">Show</string>
+    <string name="login_hide_password">Hide</string>
+    <string name="login_sign_in">Sign in</string>
+    <string name="login_create_account">Create an account</string>
+    <string name="login_working">Please wait</string>
+    <string name="login_server">Server: %1$s</string>
+    <string name="login_change_server">Change server</string>
+
+    <string name="error_email_invalid">Enter a valid email address</string>
+    <string name="error_server_unreachable">Can\'t reach the server, check your connection.</string>
+    <string name="error_connection_not_set_up">Connection isn\'t set up. Please reconnect to your server.</string>
+    <string name="error_generic_try_again">Something went wrong. Please try again.</string>
+    <string name="message_confirm_email">Check your email to confirm your account, then sign in.</string>
+
+    <string name="notes_search_hint">Search notes</string>
+    <string name="notes_search_close">Close search</string>
+    <string name="notes_menu_search">Search</string>
+    <string name="notes_menu_more">More options</string>
+    <string name="notes_menu_sort">Sort</string>
+    <string name="notes_menu_archive">Archive</string>
+    <string name="notes_menu_trash">Trash</string>
+    <string name="notes_menu_settings">Settings</string>
+    <string name="notes_menu_about">About</string>
+    <string name="notes_add_note">Add note</string>
+    <string name="notes_sort_title">Sort by</string>
+    <string name="notes_sort_newest">Newest first</string>
+    <string name="notes_sort_oldest">Oldest first</string>
+    <string name="notes_sort_title_az">Title (A-Z)</string>
+    <string name="notes_sort_title_za">Title (Z-A)</string>
+    <string name="notes_filter_by_tag">Filter by tag</string>
+    <string name="notes_tag_with_count">%1$s (%2$d)</string>
+    <string name="notes_empty">No notes yet. Tap + to add one</string>
+    <string name="notes_empty_search">No notes match \"%1$s\"</string>
+    <string name="notes_empty_tags">No notes with the selected tags</string>
+    <string name="notes_loading">Loading notes</string>
+    <string name="notes_pinned">Pinned</string>
+    <string name="notes_edited">Edited %1$s</string>
+    <string name="notes_sync_pending">Waiting to sync</string>
+    <string name="notes_sync_failed">Couldn\'t sync</string>
+    <string name="notes_actions">Note actions</string>
+    <string name="notes_action_pin">Pin</string>
+    <string name="notes_action_unpin">Unpin</string>
+    <string name="notes_action_archive">Archive</string>
+    <string name="notes_action_trash">Move to trash</string>
+    <string name="notes_action_retry">Try syncing again</string>
+    <string name="notes_action_discard">Discard changes</string>
+    <string name="notes_trashed">Moved to trash</string>
+    <string name="notes_undo">Undo</string>
+    <string name="notes_action_failed">Couldn\'t do that. Please try again.</string>
+    <string name="notes_trash_confirm_title">Move to trash?</string>
+    <string name="notes_trash_confirm_message">You can restore it from the trash later.</string>
+    <string name="notes_discard_confirm_title">Discard changes?</string>
+    <string name="notes_discard_confirm_message">Your changes to this note will be lost. The server\'s copy comes back with the next refresh.</string>
+    <string name="notes_confirm_cancel">Cancel</string>
+    <string name="notes_banner_offline">Showing saved notes. Couldn\'t reach the server. Tap to try again.</string>
+    <string name="notes_banner_server">Showing saved notes. The server had a problem. Tap to try again.</string>
+    <string name="notes_banner_secure">Showing saved notes. Couldn\'t make a secure connection. Tap to try again.</string>
+    <string name="notes_banner_unavailable">Showing saved notes. Your connection isn\'t set up. Tap to try again.</string>
+    <string name="notes_banner_schema">Showing saved notes. Your database is missing newer columns. Run the updated schema.sql in the Supabase SQL editor, then tap to check again.</string>
+    <string name="notes_banner_other">Showing saved notes. Something went wrong. Tap to try again.</string>
+    <plurals name="notes_banner_unsent">
+        <item quantity="one">Offline. %1$d change will upload when you are back online. Tap to try again.</item>
+        <item quantity="other">Offline. %1$d changes will upload when you are back online. Tap to try again.</item>
+    </plurals>
+
+    <string name="error_field_required">Required</string>
+    <string name="error_server_url_scheme_required">URL must start with https://</string>
+    <string name="error_server_url_invalid">Enter a valid URL, for example https://yourproject.supabase.co</string>
+    <string name="error_server_not_reached">Could not reach that server. Please check the URL.</string>
+    <string name="error_secure_connection">Couldn\'t make a secure connection. Check the server\'s HTTPS certificate.</string>
+    <string name="error_server_unexpected_response">The server answered with HTTP %1$d. Check the URL.</string>
+    <string name="error_key_invalid">The key contains spaces or invalid characters</string>
+    <string name="error_key_rejected">The server rejected this key (HTTP %1$d). Check that it is the publishable (anon) key.</string>
 </resources>
