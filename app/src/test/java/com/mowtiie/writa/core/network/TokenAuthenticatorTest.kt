@@ -1,7 +1,7 @@
 package com.mowtiie.writa.core.network
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.mowtiie.writa.core.datastore.ConnectionStore
+import com.mowtiie.writa.core.datastore.testPreferences
 import com.mowtiie.writa.core.security.FakeSecureStorage
 import com.mowtiie.writa.core.security.FakeSecureStorageFactory
 import com.mowtiie.writa.core.security.Session
@@ -45,10 +45,7 @@ class TokenAuthenticatorTest {
         server.start()
         connectionStore =
             ConnectionStore(
-                PreferenceDataStoreFactory.create(
-                    scope = scope,
-                    produceFile = { File(folder.root, "connection.preferences_pb") },
-                ),
+                testPreferences(scope, File(folder.root, "connection.preferences_pb")),
             )
         sessionStore =
             SessionStore(FakeSecureStorageFactory(mutableListOf(FakeSecureStorage())), Dispatchers.Unconfined)

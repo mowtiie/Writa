@@ -1,7 +1,6 @@
 package com.mowtiie.writa.core.datastore
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -22,10 +21,7 @@ class ConnectionStoreTest {
     val folder = TemporaryFolder()
 
     private fun TestScope.dataStore(): DataStore<Preferences> =
-        PreferenceDataStoreFactory.create(
-            scope = backgroundScope,
-            produceFile = { File(folder.root, "connection.preferences_pb") },
-        )
+        testPreferences(backgroundScope, File(folder.root, "connection.preferences_pb"))
 
     @Test
     fun isNotConfiguredWhenNothingIsStored() =

@@ -1,10 +1,10 @@
 package com.mowtiie.writa.feature.setup
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.mowtiie.writa.core.datastore.Connection
 import com.mowtiie.writa.core.datastore.ConnectionStore
+import com.mowtiie.writa.core.datastore.testPreferences
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -58,10 +58,7 @@ class SetupViewModelTest {
 
     private fun TestScope.connectionStore() =
         ConnectionStore(
-            PreferenceDataStoreFactory.create(
-                scope = backgroundScope,
-                produceFile = { File(folder.root, "connection.preferences_pb") },
-            ),
+            testPreferences(backgroundScope, File(folder.root, "connection.preferences_pb")),
         )
 
     private fun TestScope.viewModel(

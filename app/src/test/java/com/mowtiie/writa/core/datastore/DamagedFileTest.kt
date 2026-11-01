@@ -21,7 +21,7 @@ class DamagedFileTest {
 
     private fun TestScope.damagedFile(name: String): File = folder.root.resolve(name).also { it.writeBytes(garbage) }
 
-    private fun TestScope.store(file: File) = PreferencesDataStores.create(backgroundScope) { file }
+    private fun TestScope.store(file: File) = testPreferences(backgroundScope, file)
 
     @Test
     fun aDamagedConnectionReadsAsNotSetUp() =

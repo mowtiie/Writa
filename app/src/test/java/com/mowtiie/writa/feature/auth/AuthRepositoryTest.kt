@@ -1,7 +1,7 @@
 package com.mowtiie.writa.feature.auth
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.mowtiie.writa.core.datastore.ConnectionStore
+import com.mowtiie.writa.core.datastore.testPreferences
 import com.mowtiie.writa.core.network.ApiException
 import com.mowtiie.writa.core.network.ConnectionNotConfiguredException
 import com.mowtiie.writa.core.network.HttpClients
@@ -51,10 +51,7 @@ class AuthRepositoryTest {
         server.start()
         connectionStore =
             ConnectionStore(
-                PreferenceDataStoreFactory.create(
-                    scope = scope,
-                    produceFile = { File(folder.root, "connection.preferences_pb") },
-                ),
+                testPreferences(scope, File(folder.root, "connection.preferences_pb")),
             )
         sessionStore =
             SessionStore(FakeSecureStorageFactory(mutableListOf(FakeSecureStorage())), Dispatchers.Unconfined)

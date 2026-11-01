@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import com.mowtiie.writa.core.database.DirtyMask
-import com.mowtiie.writa.core.datastore.PreferencesDataStores
 import com.mowtiie.writa.core.datastore.SettingsStore
+import com.mowtiie.writa.core.datastore.testPreferences
 import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.NoteRepository
 import com.mowtiie.writa.feature.notes.NotesFixture
@@ -85,7 +85,7 @@ class NoteListViewModelTest {
         if (!::settings.isInitialized) {
             settings =
                 SettingsStore(
-                    PreferencesDataStores.create(backgroundScope) { File(folder.root, "settings.preferences_pb") },
+                    testPreferences(backgroundScope, File(folder.root, "settings.preferences_pb")),
                 )
         }
         val viewModel = NoteListViewModel(saved, repository, settings, fixture.scope, dispatcher)

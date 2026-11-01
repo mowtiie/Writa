@@ -1,6 +1,5 @@
 package com.mowtiie.writa.feature.notes.remote
 
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.mowtiie.writa.core.datastore.ConnectionStore
 import com.mowtiie.writa.core.network.ApiException
 import com.mowtiie.writa.core.network.ConnectionNotConfiguredException
