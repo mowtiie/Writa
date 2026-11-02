@@ -3,6 +3,7 @@ package com.mowtiie.writa.feature.crash
 import android.content.Context
 import android.os.Build
 import androidx.test.platform.app.InstrumentationRegistry
+import com.mowtiie.writa.BuildConfig
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -37,7 +38,7 @@ class CrashHandlerAndroidTest {
         assertEquals("2026-11-05T12:00:00Z", info.time)
         assertEquals(Thread.currentThread().name, info.threadName)
         assertEquals(context.packageName, info.packageName)
-        assertEquals("1.0.0", info.versionName)
+        assertEquals(BuildConfig.VERSION_NAME, info.versionName)
         assertEquals(1L, info.versionCode)
         assertEquals(Build.MODEL, info.model)
         assertEquals(Build.VERSION.SDK_INT, info.sdkInt)
@@ -58,7 +59,7 @@ class CrashHandlerAndroidTest {
         val text = file.readText()
         assertTrue(passedOn)
         assertTrue(text.contains("Package: ${context.packageName}"))
-        assertTrue(text.contains("Version: 1.0.0 (1)"))
+        assertTrue(text.contains("Version: ${BuildConfig.VERSION_NAME} (1)"))
         assertTrue(text.contains("API ${Build.VERSION.SDK_INT}"))
         assertTrue(text.contains("java.lang.IllegalStateException"))
         assertFalse(text.contains("secret note text"))

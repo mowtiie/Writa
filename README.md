@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="metadata/en-US/images/icon.png" alt="Writa icon" width="160" height="160">
+
 # Writa
 
 **Your notes. Your server. Your rules.**
@@ -21,6 +23,17 @@ Writa is a simple, open-source notes app that connects to your own Supabase back
 * **Pin and trash:** Pin notes to keep them at the top. Deleted notes go to the trash first, where you can restore them or delete them for good.
 * **Backup:** Export your notes to a JSON file and import them back.
 * **Themes and privacy:** Light, dark, and dynamic colors, plus an optional screen privacy mode that blocks screenshots.
+
+## Screenshots
+
+<div align="center">
+  <img src="metadata/en-US/images/phoneScreenshots/screenshot-1.png" alt="Notes list" width="30%" />
+  <img src="metadata/en-US/images/phoneScreenshots/screenshot-2.png" alt="Note editor" width="30%" />
+  <img src="metadata/en-US/images/phoneScreenshots/screenshot-3.png" alt="Filtering by tag" width="30%" />
+  <img src="metadata/en-US/images/phoneScreenshots/screenshot-4.png" alt="Search" width="30%" />
+  <img src="metadata/en-US/images/phoneScreenshots/screenshot-5.png" alt="Dark theme" width="30%" />
+  <img src="metadata/en-US/images/phoneScreenshots/screenshot-6.png" alt="Settings" width="30%" />
+</div>
 
 ## Getting Started
 
