@@ -1,6 +1,7 @@
 package com.mowtiie.writa.feature.auth
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import app.cash.turbine.test
 import com.mowtiie.writa.core.network.HttpClients
 import com.mowtiie.writa.core.network.TestBackend
@@ -11,7 +12,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -36,6 +39,7 @@ class LoginViewModelTest {
 
     private val scope = CoroutineScope(SupervisorJob())
     private lateinit var backend: TestBackend
+    private val viewModels = mutableListOf<LoginViewModel>()
 
     private val server get() = backend.server
 
@@ -49,11 +53,23 @@ class LoginViewModelTest {
     @After
     fun tearDown() {
         backend.close()
+        finishViewModelWork()
         scope.cancel()
         Dispatchers.resetMain()
     }
 
-    private fun viewModel(saved: SavedStateHandle = SavedStateHandle()) =
+    /** A request still in flight must end before Main is reset, or its completion fails in a later test. */
+    private fun finishViewModelWork() =
+        runBlocking {
+            for (viewModel in viewModels) {
+                val job = viewModel.viewModelScope.coroutineContext.job
+                withTimeout(WAIT_MS) { job.cancelAndJoin() }
+            }
+        }
+
+    private fun viewModel(saved: SavedStateHandle = SavedStateHandle()) = newViewModel(saved).also { viewModels += it }
+
+    private fun newViewModel(saved: SavedStateHandle) =
         LoginViewModel(
             savedState = saved,
             auth =
