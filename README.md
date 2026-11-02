@@ -68,44 +68,9 @@ Then verify the download:
 gpg --verify writa-vX.X.apk.asc writa-vX.X.apk
 ```
 
-## Building from Source
-
-Requires Android Studio (or the Android SDK) and a JDK.
-
-```
-./gradlew assembleDebug               # build
-./gradlew installDebug                # install on a connected device
-./gradlew testDebugUnitTest           # JVM unit tests
-./gradlew connectedDebugAndroidTest   # needs a device or emulator
-./gradlew lintDebug                   # lint
-```
-
-`local.properties` can optionally hold `SUPABASE_URL` and `SUPABASE_KEY`. They pre-fill the setup screen in **debug builds only**; release builds always ship with these values empty.
-
-<details>
-<summary>Releasing (maintainers)</summary>
-
-Release builds are signed with a git-ignored `keystore.properties` in the repo root. Without it, `assembleRelease` produces an unsigned APK.
-
-```
-keyAlias=...
-keyPassword=...
-storeFile=/path/to/keystore.jks
-storePassword=...
-```
-
-1. Bump `versionCode` and `versionName` in `app/build.gradle.kts`.
-2. Build the signed release with `./gradlew assembleRelease`. The APK is `app/build/outputs/apk/release/app-release.apk`.
-3. Optionally create a detached PGP signature: `gpg --armor --detach-sign writa-vX.X.apk`.
-4. Publish the APK, the `.asc` file, and `mapping-<version>.txt` on GitHub.
+## Mapping Files
 
 The mapping file is `app/build/outputs/mapping/release/mapping.txt`, renamed with the version. Release builds are minified with R8, so it is needed to read crash reports: match it to the version under "App Info" in the report and run `retrace` from the Android SDK command-line tools.
-
-</details>
-
-## Contributing
-
-Issues and pull requests are welcome. For bugs, please include your Android version and the steps to reproduce. Before opening a pull request, make sure `./gradlew assembleDebug lintDebug testDebugUnitTest` passes.
 
 ## License
 
