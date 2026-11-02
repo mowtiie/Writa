@@ -231,6 +231,30 @@ class NoteListViewModelTest {
         }
 
     @Test
+    fun anOutdatedDatabaseIsFlaggedUntilARefreshSucceeds() =
+        runTest {
+            server.enqueue(MockResponse().setBody("""[{"id":9,"title":"t","content":"c"}]"""))
+            val viewModel = viewModel()
+
+            assertTrue(viewModel.state.first { it.schemaOutdated }.schemaOutdated)
+
+            server.enqueue(MockResponse().setBody("[]"))
+            viewModel.refresh()
+
+            assertFalse(viewModel.state.first { !it.schemaOutdated }.schemaOutdated)
+        }
+
+    @Test
+    fun otherFailuresDoNotFlagTheDatabase() =
+        runTest {
+            val viewModel = viewModel()
+
+            val state = viewModel.state.first { it.banner != null }
+
+            assertFalse(state.schemaOutdated)
+        }
+
+    @Test
     fun nothingSavedAndNothingFetchedSaysTheNotesCouldNotBeLoaded() =
         runTest {
             val viewModel = viewModel()

@@ -27,12 +27,17 @@ class NoteListModelsTest {
 
     @Test
     fun aFailedRefreshShowsItsReason() {
-        for (reason in RefreshFailure.entries) {
+        for (reason in RefreshFailure.entries - RefreshFailure.SchemaOutdated) {
             assertEquals(
                 NotesBanner.RefreshFailed(reason),
                 NotesBanner.of(RefreshState.Failed(reason), pendingChanges = 0),
             )
         }
+    }
+
+    @Test
+    fun anOutdatedDatabaseHasNoBannerBecauseTheUpdateScreenReplacesTheList() {
+        assertNull(NotesBanner.of(RefreshState.Failed(RefreshFailure.SchemaOutdated), pendingChanges = 2))
     }
 
     @Test

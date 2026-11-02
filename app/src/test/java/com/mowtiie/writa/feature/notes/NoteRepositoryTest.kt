@@ -140,6 +140,17 @@ class NoteRepositoryTest {
     }
 
     @Test
+    fun aFailureWhileReadingLaterPagesLeavesTheSavedNotesUntouched() {
+        seedSynced(1, title = "saved")
+        server.enqueue(list(*List(200) { row(1000L - it) }.toTypedArray()))
+
+        refresh()
+
+        assertEquals(RefreshState.Failed(RefreshFailure.Server), repository.refreshState.value)
+        assertEquals(listOf("saved"), active().map { it.title })
+    }
+
+    @Test
     fun refreshReplacesSyncedNotesAndDropsTheOnesTheServerNoLongerHas() {
         seedSynced(1, title = "old")
         seedSynced(2)

@@ -74,7 +74,6 @@
     <string name="notes_banner_server">Showing saved notes. The server had a problem. Tap to try again.</string>
     <string name="notes_banner_secure">Showing saved notes. Couldn\'t make a secure connection. Tap to try again.</string>
     <string name="notes_banner_unavailable">Showing saved notes. Your connection isn\'t set up. Tap to try again.</string>
-    <string name="notes_banner_schema">Showing saved notes. Your database is missing newer columns. Run the updated schema.sql in the Supabase SQL editor, then tap to check again.</string>
     <string name="notes_banner_other">Showing saved notes. Something went wrong. Tap to try again.</string>
     <string name="notes_menu_sign_out">Sign out</string>
     <string name="notes_sign_out_title">Sign out?</string>

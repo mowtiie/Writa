@@ -45,6 +45,10 @@ class WritaNavHostTest {
                             modifier = Modifier.testTag(OPEN_TRASH),
                         ) { Text("trash") }
                         Button(
+                            onClick = navigation.onOpenAbout,
+                            modifier = Modifier.testTag(OPEN_ABOUT),
+                        ) { Text("about") }
+                        Button(
                             onClick = navigation.onOpenSettings,
                             modifier = Modifier.testTag(OPEN_SETTINGS),
                         ) { Text("settings") }
@@ -61,6 +65,12 @@ class WritaNavHostTest {
                             Text("open")
                         }
                         Button(onClick = navigation.onBack, modifier = Modifier.testTag(BACK)) { Text("back") }
+                    }
+                },
+                about = { onBack ->
+                    Column {
+                        Text("about", Modifier.testTag(ABOUT))
+                        Button(onClick = onBack, modifier = Modifier.testTag(BACK)) { Text("back") }
                     }
                 },
                 settings = { onBack ->
@@ -312,6 +322,17 @@ class WritaNavHostTest {
         assertOnly(SETUP)
     }
 
+    @Test
+    fun theAboutScreenOpensFromTheNotesAndBackReturns() {
+        show(AuthState.SignedIn)
+
+        rule.onNodeWithTag(OPEN_ABOUT).performClick()
+        assertOnly(ABOUT)
+
+        rule.onNodeWithTag(BACK).performClick()
+        assertOnly(NOTES)
+    }
+
     private companion object {
         const val SETUP = "setup"
         const val LOGIN = "login"
@@ -320,6 +341,8 @@ class WritaNavHostTest {
         const val ARCHIVE = "archive"
         const val TRASH = "trash"
         const val SETTINGS = "settings"
+        const val ABOUT = "about"
+        const val OPEN_ABOUT = "open-about"
         const val OPEN_SETTINGS = "open-settings"
         const val OPEN_ARCHIVE = "open-archive"
         const val OPEN_TRASH = "open-trash"

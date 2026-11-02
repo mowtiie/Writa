@@ -379,8 +379,7 @@ private fun bannerText(reason: RefreshFailure): Int =
         RefreshFailure.Server -> R.string.notes_banner_server
         RefreshFailure.SecureConnection -> R.string.notes_banner_secure
         RefreshFailure.Unavailable -> R.string.notes_banner_unavailable
-        RefreshFailure.SchemaOutdated -> R.string.notes_banner_schema
-        RefreshFailure.Other -> R.string.notes_banner_other
+        RefreshFailure.SchemaOutdated, RefreshFailure.Other -> R.string.notes_banner_other
     }
 
 @Composable

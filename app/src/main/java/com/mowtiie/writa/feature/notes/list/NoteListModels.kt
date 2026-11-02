@@ -36,12 +36,16 @@ sealed interface NotesBanner {
     ) : NotesBanner
 
     companion object {
-        /** Only a failed refresh shows a banner; while loading, the refresh indicator says it. */
+        /**
+         * Only a failed refresh shows a banner; while loading, the refresh indicator says it. An outdated database
+         * has no banner: the update screen replaces the list.
+         */
         fun of(
             refresh: RefreshState,
             pendingChanges: Int,
         ): NotesBanner? {
             val reason = (refresh as? RefreshState.Failed)?.reason ?: return null
+            if (reason == RefreshFailure.SchemaOutdated) return null
             return if (reason == RefreshFailure.Offline && pendingChanges > 0) {
                 UnsentChanges(pendingChanges)
             } else {

@@ -308,7 +308,6 @@ class NotesScreenTest {
                 RefreshFailure.Server to R.string.notes_banner_server,
                 RefreshFailure.SecureConnection to R.string.notes_banner_secure,
                 RefreshFailure.Unavailable to R.string.notes_banner_unavailable,
-                RefreshFailure.SchemaOutdated to R.string.notes_banner_schema,
                 RefreshFailure.Other to R.string.notes_banner_other,
             )
         show()
