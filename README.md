@@ -49,40 +49,77 @@ You need Android 10 (API 29) or later, and a Supabase project that is reachable 
 
 To use another server later, go to **Settings → Change server**.
 
-## Verifying a download
+## Verification
 
-Release APKs on GitHub are signed with my key. Verify one with [apksigner](https://developer.android.com/studio/command-line/apksigner.html#options-verify):
+APK releases on GitHub are signed using my key. They can
+be verified using
+[apksigner](https://developer.android.com/studio/command-line/apksigner.html#options-verify):
 
 ```
 apksigner verify --print-certs --verbose writa-vX.X.apk
 ```
 
-It should report `Verifies`, with the certificate `CN=Mowtiie` and this SHA-256 digest. Only install APKs signed with this key:
+The output should look like:
 
 ```
-8b6751f3c33185635f989530b6c073a1397b3d412befae6906a2eb5845d2de63
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v3.2 scheme (APK Signature Scheme v3.2): false
+Verified using v4 scheme (APK Signature Scheme v4): false
 ```
 
-Each release also has a detached PGP signature (`.asc`), which confirms that I published that exact file. Import my key and check that the fingerprint matches before trusting it:
+The certificate fingerprints should correspond to the ones listed below:
+
+```
+Owner: CN=Mowtiie, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown
+Issuer: CN=Mowtiie, OU=Unknown, O=Unknown, L=Unknown, ST=Unknown, C=Unknown
+Serial number: 8a256fdcdde50069
+Valid from: Wed Jun 10 22:57:23 PST 2026 until: Sun Oct 26 22:57:23 PST 2053
+Certificate fingerprints:
+         SHA1: 56:4E:2C:DB:E4:06:C9:EC:15:E6:BC:D9:0A:88:38:72:8B:FB:13:20
+         SHA256: 8B:67:51:F3:C3:31:85:63:5F:98:95:30:B6:C0:73:A1:39:7B:3D:41:2B:EF:AE:69:06:A2:EB:58:45:D2:DE:63
+```
+
+**Warning:** Only install Writa APKs signed with the key above. Verifying the signature confirms you're running a genuine, unmodified build.
+
+### PGP Signing
+
+As an additional layer on top of the Android signature above, each release is also signed with my PGP key. While `apksigner` confirms the APK itself is intact, a PGP signature confirms that *I* am the one who published this specific file to GitHub, an independent check that doesn't rely on GitHub's account security alone.
+
+**Public key fingerprint:**
+```
+9EA2 8F46 7802 5092 7643 1B69 42B5 FA42 AA63 90E1
+```
+
+Download and import the key from my website:
 
 ```
 curl -O https://mowtiie.cc/PGP_PUBLIC_KEY.asc
 gpg --import PGP_PUBLIC_KEY.asc
 ```
 
-```
-9EA2 8F46 7802 5092 7643 1B69 42B5 FA42 AA63 90E1
-```
+After importing, confirm the fingerprint printed by GPG matches the one listed above. That match is what actually establishes trust, not the import step itself. Fetching the key over HTTPS from a domain you already trust is arguably a stronger anchor than a keyserver, since keyservers accept uploads from anyone and don't vouch for identity.
 
-Then verify the download:
+Each release includes a detached `.asc` signature alongside the APK. Verify a downloaded release with:
 
 ```
 gpg --verify writa-vX.X.apk.asc writa-vX.X.apk
 ```
 
+A valid signature looks like:
+
+```
+Good signature from "Mowtiie <mowtiie.dev@gmail.com>"
+```
+
+**Note:** PGP signing is a supplementary trust measure, not a substitute for the `apksigner` check above. Verify both if you want the highest confidence that a release is genuine and unmodified.
+
 ## Mapping Files
 
-The mapping file is `app/build/outputs/mapping/release/mapping.txt`, renamed with the version. Release builds are minified with R8, so it is needed to read crash reports: match it to the version under "App Info" in the report and run `retrace` from the Android SDK command-line tools.
+Each release on GitHub includes a `mapping-<version>.txt` file alongside the APK. This file is needed to deobfuscate stack traces from crash reports: match the file to the version shown in the crash report header and use it with `retrace` from the Android SDK.
 
 ## License
 
