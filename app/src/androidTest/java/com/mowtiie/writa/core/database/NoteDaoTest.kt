@@ -188,12 +188,21 @@ class NoteDaoTest {
     fun positionsAndIdsReportTheirExtremes() =
         runTest {
             assertNull(dao.minPosition())
-            assertNull(dao.minId())
+            assertNull(dao.lowestUsedId())
 
             dao.insertAll(listOf(row(5, position = 2), row(-3, position = -7)))
 
             assertEquals(-7L, dao.minPosition())
-            assertEquals(-3L, dao.minId())
+            assertEquals(-3L, dao.lowestUsedId())
+        }
+
+    @Test
+    fun lowestUsedIdCountsIdsThatWereReplacedByTheServer() =
+        runTest {
+            dao.insert(row(975))
+            dao.putAlias(IdAlias(oldId = -4, newId = 975))
+
+            assertEquals(-4L, dao.lowestUsedId())
         }
 
     @Test

@@ -166,8 +166,13 @@ class NoteCache
             pinned: Boolean,
         ): Note =
             locked {
-                val minId = dao.minId()
-                val id = if (minId == null || minId > NoteIds.NO_NOTE) NoteIds.FIRST_LOCAL else minId - 1
+                val lowestUsedId = dao.lowestUsedId()
+                val id =
+                    if (lowestUsedId == null || lowestUsedId > NoteIds.NO_NOTE) {
+                        NoteIds.FIRST_LOCAL
+                    } else {
+                        lowestUsedId - 1
+                    }
                 val position = (dao.minPosition() ?: 0) - 1
                 val note =
                     Note(

@@ -41,8 +41,8 @@ interface NoteDao {
     @Query("SELECT MIN(position) FROM notes")
     suspend fun minPosition(): Long?
 
-    @Query("SELECT MIN(id) FROM notes")
-    suspend fun minId(): Long?
+    @Query("SELECT MIN(id) FROM (SELECT id FROM notes UNION ALL SELECT old_id AS id FROM id_alias)")
+    suspend fun lowestUsedId(): Long?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(note: NoteEntity)

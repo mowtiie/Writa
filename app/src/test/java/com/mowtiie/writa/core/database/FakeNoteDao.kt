@@ -39,7 +39,7 @@ class FakeNoteDao : NoteDao {
 
     override suspend fun minPosition(): Long? = rows.minOfOrNull { it.position }
 
-    override suspend fun minId(): Long? = rows.minOfOrNull { it.id }
+    override suspend fun lowestUsedId(): Long? = (rows.map { it.id } + aliases.keys).minOrNull()
 
     override suspend fun insert(note: NoteEntity) {
         table.value = table.value + (note.id to note)

@@ -337,6 +337,18 @@ class NoteCacheTest {
         }
 
     @Test
+    fun aTemporaryIdAlreadyReplacedByTheServerIsNotHandedOutAgain() =
+        runTest {
+            dao.putAlias(IdAlias(oldId = -2, newId = 975))
+            seed(note(975), position = 0)
+            val cache = cache()
+
+            val created = cache.createLocal("offline", null, emptyList(), false)
+
+            assertEquals(-3L, created.id)
+        }
+
+    @Test
     fun aNewNoteShowsUpFirstInTheList() =
         runTest {
             seed(note(5), position = 0)
