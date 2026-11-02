@@ -238,15 +238,15 @@ class LoginScreenTest {
         show(LoginUiState(password = "secret", serverHost = "h"))
 
         assertFalse("hidden at first", displayedPassword().contains("secret"))
-        rule.onNodeWithText(text(R.string.login_show_password)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.login_show_password)).performClick()
 
         assertEquals("secret", displayedPassword())
-        rule.onNodeWithText(text(R.string.login_hide_password)).assertIsDisplayed()
+        rule.onNodeWithContentDescription(text(R.string.login_hide_password)).assertIsDisplayed()
 
-        rule.onNodeWithText(text(R.string.login_hide_password)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.login_hide_password)).performClick()
 
         assertFalse("hidden again", displayedPassword().contains("secret"))
-        rule.onNodeWithText(text(R.string.login_show_password)).assertIsDisplayed()
+        rule.onNodeWithContentDescription(text(R.string.login_show_password)).assertIsDisplayed()
     }
 
     @Test
@@ -254,7 +254,7 @@ class LoginScreenTest {
         show(LoginUiState(password = "secret", serverHost = "h"))
 
         passwordField().assert(hasPassword)
-        rule.onNodeWithText(text(R.string.login_show_password)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.login_show_password)).performClick()
         passwordField().assert(hasPassword)
     }
 

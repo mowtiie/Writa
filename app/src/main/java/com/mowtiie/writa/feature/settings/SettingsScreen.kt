@@ -55,6 +55,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
 import com.mowtiie.writa.core.datastore.Theme
 import com.mowtiie.writa.core.ui.CollectEvents
+import com.mowtiie.writa.core.ui.DialogContent
 import com.mowtiie.writa.core.ui.PreferenceCategory
 import com.mowtiie.writa.core.ui.PreferenceMinHeight
 import com.mowtiie.writa.core.ui.PreferenceRow
@@ -261,7 +262,7 @@ private fun <T> ChoiceDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            Column(Modifier.selectableGroup()) {
+            DialogContent(Modifier.selectableGroup()) {
                 for ((value, label) in options) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -305,7 +306,7 @@ private fun ChangeServerDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.settings_change_server_title)) },
-        text = { Text(message) },
+        text = { DialogContent { Text(message) } },
         confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.settings_continue)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.notes_confirm_cancel)) } },
     )
@@ -320,7 +321,7 @@ private fun ImportDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.settings_import_title)) },
-        text = { Text(pluralStringResource(R.plurals.settings_import_message, count, count)) },
+        text = { DialogContent { Text(pluralStringResource(R.plurals.settings_import_message, count, count)) } },
         confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.settings_import)) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.notes_confirm_cancel)) } },
     )

@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -167,11 +168,16 @@ fun LoginScreen(
                 enabled = !state.isLoading,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
-                    TextButton(onClick = { showPassword = !showPassword }) {
-                        Text(
-                            stringResource(
-                                if (showPassword) R.string.login_hide_password else R.string.login_show_password,
-                            ),
+                    IconButton(onClick = { showPassword = !showPassword }) {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    if (showPassword) R.drawable.ic_visibility_off else R.drawable.ic_visibility,
+                                ),
+                            contentDescription =
+                                stringResource(
+                                    if (showPassword) R.string.login_hide_password else R.string.login_show_password,
+                                ),
                         )
                     }
                 },

@@ -63,6 +63,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
 import com.mowtiie.writa.core.ui.CollectEvents
+import com.mowtiie.writa.core.ui.DialogContent
 import com.mowtiie.writa.core.ui.WithoutPersonalizedLearning
 import com.mowtiie.writa.core.ui.submitOnHardwareEnter
 import com.mowtiie.writa.feature.notes.Tags
@@ -166,7 +167,7 @@ fun EditorScreen(
         AlertDialog(
             onDismissRequest = { showDiscard = false },
             title = { Text(stringResource(R.string.editor_discard_title)) },
-            text = { Text(stringResource(R.string.editor_discard_message)) },
+            text = { DialogContent { Text(stringResource(R.string.editor_discard_message)) } },
             confirmButton = {
                 TextButton(onClick = {
                     showDiscard = false
@@ -182,7 +183,7 @@ fun EditorScreen(
         AlertDialog(
             onDismissRequest = { showTrash = false },
             title = { Text(stringResource(R.string.notes_trash_confirm_title)) },
-            text = { Text(stringResource(R.string.notes_trash_confirm_message)) },
+            text = { DialogContent { Text(stringResource(R.string.notes_trash_confirm_message)) } },
             confirmButton = {
                 TextButton(onClick = {
                     showTrash = false

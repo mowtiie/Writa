@@ -92,6 +92,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
+import com.mowtiie.writa.core.ui.DialogContent
 import com.mowtiie.writa.core.ui.ScrollToTopWhenFirstItemChanges
 import com.mowtiie.writa.core.ui.WithoutPersonalizedLearning
 import com.mowtiie.writa.feature.notes.Note
@@ -111,7 +112,7 @@ internal fun ConfirmDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
-        text = { Text(message) },
+        text = { DialogContent { Text(message) } },
         confirmButton = { TextButton(onClick = onConfirm) { Text(confirmLabel) } },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.notes_confirm_cancel)) } },
     )

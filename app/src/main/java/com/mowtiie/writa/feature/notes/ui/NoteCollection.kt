@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mowtiie.writa.R
+import com.mowtiie.writa.core.ui.DialogContent
 import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.list.NoteDates
 
@@ -198,7 +199,7 @@ private fun ActionsDialog(
         onDismissRequest = onDismiss,
         title = { Text(title, maxLines = 2) },
         text = {
-            Column {
+            DialogContent {
                 for (action in actions) {
                     TextButton(onClick = { onSelect(action) }, modifier = Modifier.fillMaxWidth()) {
                         Text(action.label, modifier = Modifier.fillMaxWidth())

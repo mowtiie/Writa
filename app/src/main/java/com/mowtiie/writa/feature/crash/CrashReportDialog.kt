@@ -25,6 +25,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
 import com.mowtiie.writa.core.ui.CollectEvents
+import com.mowtiie.writa.core.ui.DialogContent
 import com.mowtiie.writa.core.ui.FilterObscuredTouches
 
 private const val REPORT_MIME_TYPE = "text/plain"
@@ -82,7 +83,7 @@ fun CrashReportDialog(
         onDismissRequest = {},
         title = { Text(stringResource(R.string.crash_title)) },
         text = {
-            Column {
+            DialogContent {
                 Text(stringResource(R.string.crash_message))
                 Button(onClick = onEmail, modifier = Modifier.padding(top = 16.dp).fillMaxWidth()) {
                     Text(stringResource(R.string.crash_email))

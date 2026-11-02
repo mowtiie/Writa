@@ -92,6 +92,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
+import com.mowtiie.writa.core.ui.DialogContent
 import com.mowtiie.writa.core.ui.ScrollToTopWhenFirstItemChanges
 import com.mowtiie.writa.core.ui.WithoutPersonalizedLearning
 import com.mowtiie.writa.feature.notes.Note
@@ -438,7 +439,7 @@ private fun SortDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.notes_sort_title)) },
         text = {
-            Column {
+            DialogContent {
                 for (sort in Sort.entries) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
