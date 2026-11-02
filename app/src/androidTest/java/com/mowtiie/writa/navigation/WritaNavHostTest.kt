@@ -1,5 +1,7 @@
 package com.mowtiie.writa.navigation
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +13,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,7 +30,21 @@ class WritaNavHostTest {
                 authState = authState,
                 setup = { Text("setup", Modifier.testTag(SETUP)) },
                 login = { Text("login", Modifier.testTag(LOGIN)) },
-                notes = { Text("notes", Modifier.testTag(NOTES)) },
+                notes = { navigation ->
+                    Column {
+                        Text("notes", Modifier.testTag(NOTES))
+                        Button(onClick = navigation.onCreateNote, modifier = Modifier.testTag(NEW_NOTE)) { Text("new") }
+                        Button(onClick = { navigation.onOpenNote(OPENED_ID) }, modifier = Modifier.testTag(OPEN_NOTE)) {
+                            Text("open")
+                        }
+                    }
+                },
+                editor = { onClose ->
+                    Column {
+                        Text("editor", Modifier.testTag(EDITOR))
+                        Button(onClick = onClose, modifier = Modifier.testTag(CLOSE_EDITOR)) { Text("close") }
+                    }
+                },
             )
         }
     }
@@ -38,7 +55,7 @@ class WritaNavHostTest {
     }
 
     private fun assertOnly(tag: String) {
-        for (other in listOf(SETUP, LOGIN, NOTES) - tag) rule.onAllNodesWithTag(other).assertCountEquals(0)
+        for (other in listOf(SETUP, LOGIN, NOTES, EDITOR) - tag) rule.onAllNodesWithTag(other).assertCountEquals(0)
         rule.onNodeWithTag(tag).assertIsDisplayed()
     }
 
@@ -67,7 +84,7 @@ class WritaNavHostTest {
     fun nothingIsDrawnUntilTheStateIsKnown() {
         show(null)
 
-        for (tag in listOf(SETUP, LOGIN, NOTES)) rule.onAllNodesWithTag(tag).assertCountEquals(0)
+        for (tag in listOf(SETUP, LOGIN, NOTES, EDITOR)) rule.onAllNodesWithTag(tag).assertCountEquals(0)
     }
 
     @Test
@@ -146,9 +163,44 @@ class WritaNavHostTest {
         assertOnly(LOGIN)
     }
 
+    @Test
+    fun creatingANoteOpensTheEditorAndClosingItReturnsToTheNotes() {
+        show(AuthState.SignedIn)
+
+        rule.onNodeWithTag(NEW_NOTE).performClick()
+        assertOnly(EDITOR)
+
+        rule.onNodeWithTag(CLOSE_EDITOR).performClick()
+        assertOnly(NOTES)
+    }
+
+    @Test
+    fun openingANoteShowsTheEditor() {
+        show(AuthState.SignedIn)
+
+        rule.onNodeWithTag(OPEN_NOTE).performClick()
+
+        assertOnly(EDITOR)
+    }
+
+    @Test
+    fun aSessionThatEndsWhileTheEditorIsOpenMovesToLogin() {
+        show(AuthState.SignedIn)
+        rule.onNodeWithTag(NEW_NOTE).performClick()
+
+        change(AuthState.SignedOut)
+
+        assertOnly(LOGIN)
+    }
+
     private companion object {
         const val SETUP = "setup"
         const val LOGIN = "login"
         const val NOTES = "notes"
+        const val EDITOR = "editor"
+        const val NEW_NOTE = "new"
+        const val OPEN_NOTE = "open"
+        const val CLOSE_EDITOR = "close"
+        const val OPENED_ID = 5L
     }
 }

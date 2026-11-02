@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.mowtiie.writa.feature.auth.LoginDestination
+import com.mowtiie.writa.feature.editor.EditorDestination
 import com.mowtiie.writa.feature.notes.list.NotesDestination
 import com.mowtiie.writa.feature.notes.list.NotesNavigation
 import com.mowtiie.writa.feature.setup.SetupDestination
@@ -24,7 +25,8 @@ fun WritaNavHost(
     authState: AuthState?,
     setup: @Composable () -> Unit = { SetupDestination() },
     login: @Composable () -> Unit = { LoginDestination() },
-    notes: @Composable () -> Unit = { NotesDestination(NotesNavigation()) },
+    notes: @Composable (NotesNavigation) -> Unit = { NotesDestination(it) },
+    editor: @Composable (onClose: () -> Unit) -> Unit = { EditorDestination(onClose = it) },
 ) {
     if (authState == null) return
 
@@ -33,7 +35,15 @@ fun WritaNavHost(
     NavHost(navController = navController, startDestination = startRoute) {
         composable<SetupRoute> { setup() }
         composable<LoginRoute> { login() }
-        composable<NotesRoute> { notes() }
+        composable<NotesRoute> {
+            notes(
+                NotesNavigation(
+                    onOpenNote = { navController.navigate(EditorRoute(it)) },
+                    onCreateNote = { navController.navigate(EditorRoute()) },
+                ),
+            )
+        }
+        composable<EditorRoute> { editor { navController.popBackStack() } }
     }
     LaunchedEffect(authState) { navController.show(authState) }
 }

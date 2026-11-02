@@ -93,6 +93,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
 import com.mowtiie.writa.core.ui.ScrollToTopWhenFirstItemChanges
+import com.mowtiie.writa.core.ui.WithoutPersonalizedLearning
 import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.RefreshFailure
 import com.mowtiie.writa.feature.notes.Sort
@@ -298,25 +299,27 @@ private fun SearchTopBar(
             }
         },
         title = {
-            TextField(
-                value = field,
-                onValueChange = {
-                    field = it
-                    if (it.text != search) onChange(it.text)
-                },
-                placeholder = { Text(stringResource(R.string.notes_search_hint)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
-                keyboardActions = KeyboardActions(onSearch = {}),
-                colors =
-                    TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                modifier = Modifier.fillMaxWidth().focusRequester(focus),
-            )
+            WithoutPersonalizedLearning {
+                TextField(
+                    value = field,
+                    onValueChange = {
+                        field = it
+                        if (it.text != search) onChange(it.text)
+                    },
+                    placeholder = { Text(stringResource(R.string.notes_search_hint)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(autoCorrectEnabled = false, imeAction = ImeAction.Search),
+                    keyboardActions = KeyboardActions(onSearch = {}),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                        ),
+                    modifier = Modifier.fillMaxWidth().focusRequester(focus),
+                )
+            }
         },
         actions = {
             if (search.isNotEmpty()) {

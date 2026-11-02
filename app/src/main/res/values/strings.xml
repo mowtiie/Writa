@@ -91,6 +91,33 @@
         <item quantity="other">Offline. %1$d changes will upload when you are back online. Tap to try again.</item>
     </plurals>
 
+    <string name="editor_title_new">New note</string>
+    <string name="editor_title_edit">Edit note</string>
+    <string name="editor_navigate_up">Navigate up</string>
+    <string name="editor_hint_title">Title</string>
+    <string name="editor_hint_tag">Add a tag</string>
+    <string name="editor_hint_content">Content</string>
+    <string name="editor_error_empty_title">Title cannot be empty</string>
+    <plurals name="editor_error_tags_limit">
+        <item quantity="one">Up to %1$d tag per note</item>
+        <item quantity="other">Up to %1$d tags per note</item>
+    </plurals>
+    <string name="editor_remove_tag">Remove tag %1$s</string>
+    <string name="editor_menu_save">Save</string>
+    <string name="editor_menu_pin">Pin</string>
+    <string name="editor_menu_unpin">Unpin</string>
+    <string name="editor_menu_delete">Move to trash</string>
+    <string name="editor_menu_archive">Archive</string>
+    <string name="editor_menu_unarchive">Unarchive</string>
+    <string name="editor_discard_title">Discard changes?</string>
+    <string name="editor_discard_message">Your changes will not be saved.</string>
+    <string name="editor_discard">Discard</string>
+    <string name="editor_keep_editing">Keep editing</string>
+    <string name="editor_save_failed">Couldn\'t save. Please try again.</string>
+    <string name="editor_trash_failed">Couldn\'t move the note to the trash. Please try again.</string>
+    <string name="editor_unavailable">Couldn\'t open this note. It may have been deleted.</string>
+    <string name="editor_loading">Loading note…</string>
+
     <string name="error_field_required">Required</string>
     <string name="error_server_url_scheme_required">URL must start with https://</string>
     <string name="error_server_url_invalid">Enter a valid URL, for example https://yourproject.supabase.co</string>
