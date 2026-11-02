@@ -216,7 +216,7 @@ private fun EditorTopBar(
             IconButton(onClick = onNavigateUp) {
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.editor_navigate_up),
+                    contentDescription = stringResource(R.string.navigate_up),
                 )
             }
         },

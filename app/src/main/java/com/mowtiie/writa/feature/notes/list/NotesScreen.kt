@@ -98,6 +98,8 @@ import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.RefreshFailure
 import com.mowtiie.writa.feature.notes.Sort
 import com.mowtiie.writa.feature.notes.SyncState
+import com.mowtiie.writa.feature.notes.ui.ConfirmDialog
+import com.mowtiie.writa.feature.notes.ui.NoteCard
 
 /** Where the list can take the user. */
 class NotesNavigation(
@@ -736,106 +738,4 @@ private fun SwipeableNote(
             onDismiss = { confirm = null },
         )
     }
-}
-
-@Composable
-private fun ConfirmDialog(
-    title: String,
-    message: String,
-    confirmLabel: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = { Text(message) },
-        confirmButton = { TextButton(onClick = onConfirm) { Text(confirmLabel) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.notes_confirm_cancel)) } },
-    )
-}
-
-@Composable
-private fun NoteCard(
-    note: Note,
-    dates: NoteDates,
-    modifier: Modifier = Modifier,
-) {
-    OutlinedCard(
-        colors = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        Column(Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = note.title,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontFamily = FontFamily.Serif,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                if (note.pinned) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_pin),
-                        contentDescription = stringResource(R.string.notes_pinned),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(start = 8.dp).size(20.dp),
-                    )
-                }
-            }
-            note.content?.takeIf { it.isNotEmpty() }?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontFamily = FontFamily.Serif,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 12.dp),
-                )
-            }
-            if (note.tags.isNotEmpty()) {
-                Text(
-                    text = tagsLine(note.tags),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 8.dp),
-                )
-            }
-            Text(
-                text = footerOf(note, dates),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        }
-    }
-}
-
-@Composable
-private fun tagsLine(tags: List<String>): String {
-    val shown = tags.take(MAX_TAGS_ON_CARD).joinToString("  ") { "#$it" }
-    val hidden = tags.size - MAX_TAGS_ON_CARD
-    return if (hidden > 0) "$shown  ${stringResource(R.string.notes_more_tags, hidden)}" else shown
-}
-
-private const val MAX_TAGS_ON_CARD = 3
-
-@Composable
-private fun footerOf(
-    note: Note,
-    dates: NoteDates,
-): String {
-    val edited = stringResource(R.string.notes_edited, dates.format(note.updatedAt).orEmpty())
-    val date = if (note.isEdited) edited else dates.format(note.createdAt).orEmpty()
-    val sync =
-        when (note.syncState) {
-            SyncState.Synced -> null
-            SyncState.Pending -> stringResource(R.string.notes_sync_pending)
-            SyncState.Failed -> stringResource(R.string.notes_sync_failed)
-        }
-    return listOfNotNull(date.takeIf { it.isNotEmpty() }, sync).joinToString(" · ")
 }

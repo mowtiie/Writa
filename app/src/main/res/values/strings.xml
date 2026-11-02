@@ -91,9 +91,22 @@
         <item quantity="other">Offline. %1$d changes will upload when you are back online. Tap to try again.</item>
     </plurals>
 
+    <string name="archive_title">Archive</string>
+    <string name="archive_empty">No archived notes</string>
+    <string name="archive_unarchive">Unarchive</string>
+    <string name="trash_title">Trash</string>
+    <string name="trash_empty">Trash is empty</string>
+    <string name="trash_restore">Restore</string>
+    <string name="trash_delete_forever">Delete forever</string>
+    <string name="trash_delete_forever_title">Delete forever?</string>
+    <string name="trash_delete_forever_message">This will permanently delete the note. It cannot be undone.</string>
+    <string name="trash_menu_empty">Empty trash</string>
+    <string name="trash_empty_title">Empty trash?</string>
+    <string name="trash_empty_message">Every note in the trash will be permanently deleted. This cannot be undone.</string>
+
     <string name="editor_title_new">New note</string>
     <string name="editor_title_edit">Edit note</string>
-    <string name="editor_navigate_up">Navigate up</string>
+    <string name="navigate_up">Navigate up</string>
     <string name="editor_hint_title">Title</string>
     <string name="editor_hint_tag">Add a tag</string>
     <string name="editor_hint_content">Content</string>

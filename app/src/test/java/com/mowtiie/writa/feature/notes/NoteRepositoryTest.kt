@@ -446,6 +446,25 @@ class NoteRepositoryTest {
     }
 
     @Test
+    fun emptyingTheTrashDeletesOnlyTheTrashedNotes() {
+        seedSynced(1)
+        seedSynced(2, deletedAt = T1)
+        seedSynced(3, archived = true)
+        seedSynced(4, deletedAt = T1)
+
+        assertTrue(runBlocking { repository.emptyTrash() })
+
+        assertTrue(trashed().isEmpty())
+        assertEquals(listOf(1L), active().map { it.id })
+        assertEquals(listOf(3L), archived().map { it.id })
+    }
+
+    @Test
+    fun emptyingAnEmptyTrashIsFine() {
+        assertTrue(runBlocking { repository.emptyTrash() })
+    }
+
+    @Test
     fun deletingANoteThatNeverReachedTheServerSendsNothing() {
         val created = runBlocking { repository.create("t", null, emptyList(), pinned = false) }
         awaitRequest()

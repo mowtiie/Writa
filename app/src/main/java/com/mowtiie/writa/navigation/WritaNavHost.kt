@@ -9,11 +9,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.mowtiie.writa.feature.archive.ArchiveDestination
 import com.mowtiie.writa.feature.auth.LoginDestination
 import com.mowtiie.writa.feature.editor.EditorDestination
 import com.mowtiie.writa.feature.notes.list.NotesDestination
 import com.mowtiie.writa.feature.notes.list.NotesNavigation
 import com.mowtiie.writa.feature.setup.SetupDestination
+import com.mowtiie.writa.feature.trash.TrashDestination
+
+/** Where the archive can lead. */
+class ArchiveNavigation(
+    val onOpenNote: (Long) -> Unit,
+    val onBack: () -> Unit,
+)
 
 /**
  * The one navigation graph. The screen the user is on follows [authState], so no screen checks the session or
@@ -27,6 +35,8 @@ fun WritaNavHost(
     login: @Composable () -> Unit = { LoginDestination() },
     notes: @Composable (NotesNavigation) -> Unit = { NotesDestination(it) },
     editor: @Composable (onClose: () -> Unit) -> Unit = { EditorDestination(onClose = it) },
+    archive: @Composable (ArchiveNavigation) -> Unit = { ArchiveDestination(it.onOpenNote, it.onBack) },
+    trash: @Composable (onBack: () -> Unit) -> Unit = { TrashDestination(onBack = it) },
 ) {
     if (authState == null) return
 
@@ -40,10 +50,21 @@ fun WritaNavHost(
                 NotesNavigation(
                     onOpenNote = { navController.navigate(EditorRoute(it)) },
                     onCreateNote = { navController.navigate(EditorRoute()) },
+                    onOpenArchive = { navController.navigate(ArchiveRoute) },
+                    onOpenTrash = { navController.navigate(TrashRoute) },
                 ),
             )
         }
         composable<EditorRoute> { editor { navController.popBackStack() } }
+        composable<ArchiveRoute> {
+            archive(
+                ArchiveNavigation(
+                    onOpenNote = { navController.navigate(EditorRoute(it)) },
+                    onBack = { navController.popBackStack() },
+                ),
+            )
+        }
+        composable<TrashRoute> { trash { navController.popBackStack() } }
     }
     LaunchedEffect(authState) { navController.show(authState) }
 }

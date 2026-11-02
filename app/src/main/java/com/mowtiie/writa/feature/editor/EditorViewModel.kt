@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.NoteRepository
+import com.mowtiie.writa.feature.notes.attempt
 import com.mowtiie.writa.navigation.EditorRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -159,15 +159,6 @@ class EditorViewModel
                 )
             return repository.save(edited) != null
         }
-
-        private suspend fun attempt(block: suspend () -> Boolean): Boolean =
-            try {
-                block()
-            } catch (e: CancellationException) {
-                throw e
-            } catch (_: Exception) {
-                false
-            }
 
         private fun finish(
             succeeded: Boolean,

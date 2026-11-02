@@ -12,6 +12,12 @@ data object LoginRoute
 data object NotesRoute
 
 @Serializable
+data object ArchiveRoute
+
+@Serializable
+data object TrashRoute
+
+@Serializable
 data class EditorRoute(
     val noteId: Long = NEW_NOTE,
 ) {

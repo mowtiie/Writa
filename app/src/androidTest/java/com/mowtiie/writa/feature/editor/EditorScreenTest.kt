@@ -230,7 +230,7 @@ class EditorScreenTest {
     fun leavingWithoutChangesClosesAtOnce() {
         show(existing)
 
-        rule.onNodeWithContentDescription(text(R.string.editor_navigate_up)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.navigate_up)).performClick()
 
         assertEquals(listOf("close"), calls)
     }
@@ -239,7 +239,7 @@ class EditorScreenTest {
     fun leavingWithChangesAsksFirstAndKeepEditingStays() {
         show(existing.copy(draft = NoteDraft("Seven!", "body")))
 
-        rule.onNodeWithContentDescription(text(R.string.editor_navigate_up)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.navigate_up)).performClick()
         rule.onNodeWithText(text(R.string.editor_discard_title)).assertIsDisplayed()
         assertTrue(calls.isEmpty())
 
@@ -253,7 +253,7 @@ class EditorScreenTest {
     fun discardingTheChangesCloses() {
         show(existing.copy(draft = NoteDraft("Seven!", "body")))
 
-        rule.onNodeWithContentDescription(text(R.string.editor_navigate_up)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.navigate_up)).performClick()
         rule.onNodeWithText(text(R.string.editor_discard)).performClick()
 
         assertEquals(listOf("close"), calls)
@@ -308,7 +308,7 @@ class EditorScreenTest {
         show(EditorUiState(load = EditorLoad.Unavailable, isNew = false))
 
         rule.onNodeWithText(text(R.string.editor_unavailable)).assertIsDisplayed()
-        rule.onNodeWithContentDescription(text(R.string.editor_navigate_up)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.navigate_up)).performClick()
 
         assertEquals(listOf("close"), calls)
     }

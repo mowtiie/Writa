@@ -33,10 +33,33 @@ class WritaNavHostTest {
                 notes = { navigation ->
                     Column {
                         Text("notes", Modifier.testTag(NOTES))
+                        Button(
+                            onClick = navigation.onOpenArchive,
+                            modifier = Modifier.testTag(OPEN_ARCHIVE),
+                        ) { Text("archive") }
+                        Button(
+                            onClick = navigation.onOpenTrash,
+                            modifier = Modifier.testTag(OPEN_TRASH),
+                        ) { Text("trash") }
                         Button(onClick = navigation.onCreateNote, modifier = Modifier.testTag(NEW_NOTE)) { Text("new") }
                         Button(onClick = { navigation.onOpenNote(OPENED_ID) }, modifier = Modifier.testTag(OPEN_NOTE)) {
                             Text("open")
                         }
+                    }
+                },
+                archive = { navigation ->
+                    Column {
+                        Text("archive", Modifier.testTag(ARCHIVE))
+                        Button(onClick = { navigation.onOpenNote(OPENED_ID) }, modifier = Modifier.testTag(OPEN_NOTE)) {
+                            Text("open")
+                        }
+                        Button(onClick = navigation.onBack, modifier = Modifier.testTag(BACK)) { Text("back") }
+                    }
+                },
+                trash = { onBack ->
+                    Column {
+                        Text("trash", Modifier.testTag(TRASH))
+                        Button(onClick = onBack, modifier = Modifier.testTag(BACK)) { Text("back") }
                     }
                 },
                 editor = { onClose ->
@@ -55,7 +78,16 @@ class WritaNavHostTest {
     }
 
     private fun assertOnly(tag: String) {
-        for (other in listOf(SETUP, LOGIN, NOTES, EDITOR) - tag) rule.onAllNodesWithTag(other).assertCountEquals(0)
+        for (other in listOf(
+            SETUP,
+            LOGIN,
+            NOTES,
+            EDITOR,
+            ARCHIVE,
+            TRASH,
+        ) - tag) {
+            rule.onAllNodesWithTag(other).assertCountEquals(0)
+        }
         rule.onNodeWithTag(tag).assertIsDisplayed()
     }
 
@@ -84,7 +116,16 @@ class WritaNavHostTest {
     fun nothingIsDrawnUntilTheStateIsKnown() {
         show(null)
 
-        for (tag in listOf(SETUP, LOGIN, NOTES, EDITOR)) rule.onAllNodesWithTag(tag).assertCountEquals(0)
+        for (tag in listOf(
+            SETUP,
+            LOGIN,
+            NOTES,
+            EDITOR,
+            ARCHIVE,
+            TRASH,
+        )) {
+            rule.onAllNodesWithTag(tag).assertCountEquals(0)
+        }
     }
 
     @Test
@@ -193,11 +234,60 @@ class WritaNavHostTest {
         assertOnly(LOGIN)
     }
 
+    @Test
+    fun theArchiveOpensFromTheNotesAndBackReturns() {
+        show(AuthState.SignedIn)
+
+        rule.onNodeWithTag(OPEN_ARCHIVE).performClick()
+        assertOnly(ARCHIVE)
+
+        rule.onNodeWithTag(BACK).performClick()
+        assertOnly(NOTES)
+    }
+
+    @Test
+    fun aNoteOpenedFromTheArchiveShowsTheEditorAndClosingReturnsToTheArchive() {
+        show(AuthState.SignedIn)
+        rule.onNodeWithTag(OPEN_ARCHIVE).performClick()
+
+        rule.onNodeWithTag(OPEN_NOTE).performClick()
+        assertOnly(EDITOR)
+
+        rule.onNodeWithTag(CLOSE_EDITOR).performClick()
+        assertOnly(ARCHIVE)
+    }
+
+    @Test
+    fun theTrashOpensFromTheNotesAndBackReturns() {
+        show(AuthState.SignedIn)
+
+        rule.onNodeWithTag(OPEN_TRASH).performClick()
+        assertOnly(TRASH)
+
+        rule.onNodeWithTag(BACK).performClick()
+        assertOnly(NOTES)
+    }
+
+    @Test
+    fun aSessionThatEndsInTheTrashMovesToLogin() {
+        show(AuthState.SignedIn)
+        rule.onNodeWithTag(OPEN_TRASH).performClick()
+
+        change(AuthState.SignedOut)
+
+        assertOnly(LOGIN)
+    }
+
     private companion object {
         const val SETUP = "setup"
         const val LOGIN = "login"
         const val NOTES = "notes"
         const val EDITOR = "editor"
+        const val ARCHIVE = "archive"
+        const val TRASH = "trash"
+        const val OPEN_ARCHIVE = "open-archive"
+        const val OPEN_TRASH = "open-trash"
+        const val BACK = "back"
         const val NEW_NOTE = "new"
         const val OPEN_NOTE = "open"
         const val CLOSE_EDITOR = "close"

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import java.time.Clock
@@ -132,6 +133,14 @@ class NoteRepository
             if (deleted) syncEngine.trigger()
             return deleted
         }
+
+        /** Deletes every note in the trash for good. False if one of them could not be deleted. */
+        suspend fun emptyTrash(): Boolean =
+            cache
+                .observeTrashed()
+                .first()
+                .map { deletePermanently(it.id) }
+                .all { it }
 
         /** Lets a note whose upload the server refused be tried again. */
         suspend fun retryFailed(id: Long) {
