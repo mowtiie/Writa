@@ -331,7 +331,7 @@ class LoginViewModelTest {
 
         viewModel.onMessageShown()
 
-        assertNull(viewModel.state.value.message)
+        assertNull(runBlocking { withTimeout(WAIT_MS) { viewModel.state.first { it.message == null } } }.message)
     }
 
     @Test
