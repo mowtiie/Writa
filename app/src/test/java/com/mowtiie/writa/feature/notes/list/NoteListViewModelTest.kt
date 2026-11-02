@@ -14,6 +14,7 @@ import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.NoteRepository
 import com.mowtiie.writa.feature.notes.NotesFixture
 import com.mowtiie.writa.feature.notes.RefreshFailure
+import com.mowtiie.writa.feature.notes.RefreshState
 import com.mowtiie.writa.feature.notes.Sort
 import com.mowtiie.writa.feature.notes.SyncState
 import kotlinx.coroutines.Dispatchers
@@ -148,6 +149,15 @@ class NoteListViewModelTest {
             )
         }
 
+    /** The refresh answers on a real IO thread; seeding before it ends would be overwritten by its result. */
+    private suspend fun awaitRefreshed() {
+        withContext(Dispatchers.Default) {
+            withTimeout(WAIT_MS) {
+                while (server.requestCount == 0 || repository.refreshState.value !is RefreshState.Idle) delay(POLL_MS)
+            }
+        }
+    }
+
     private fun seed(
         note: Note,
         position: Long = note.id,
@@ -207,6 +217,7 @@ class NoteListViewModelTest {
             server.enqueue(MockResponse().setBody("[]"))
             val viewModel = viewModel()
             assertEquals(EmptyReason.NoNotes, viewModel.state.first { it.isLoaded }.emptyReason)
+            awaitRefreshed()
 
             seed(note(1, title = "Shopping"))
             viewModel.state.first { it.items.isNotEmpty() }

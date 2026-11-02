@@ -91,6 +91,52 @@
         <item quantity="other">Offline. %1$d changes will upload when you are back online. Tap to try again.</item>
     </plurals>
 
+    <string name="settings_title">Settings</string>
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System default</string>
+    <string name="settings_theme_battery">Battery saver</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_contrast">Contrast</string>
+    <string name="settings_contrast_low">Low</string>
+    <string name="settings_contrast_medium">Medium</string>
+    <string name="settings_contrast_high">High</string>
+    <string name="settings_dynamic_color">Dynamic colors</string>
+    <string name="settings_dynamic_color_summary">Apply colors from your wallpaper to the app theme</string>
+    <string name="settings_security">Security &amp; privacy</string>
+    <string name="settings_screen_privacy">Screen privacy</string>
+    <string name="settings_screen_privacy_summary">Prevents screenshots and screen recordings in the app</string>
+    <string name="settings_backup">Backup &amp; restore</string>
+    <string name="settings_import">Import</string>
+    <string name="settings_import_summary">Add notes from a Writa JSON backup file</string>
+    <string name="settings_export">Export</string>
+    <string name="settings_export_summary">Save your notes to a JSON backup file (not encrypted)</string>
+    <string name="settings_configuration">Configuration</string>
+    <string name="settings_change_server">Change server</string>
+    <string name="settings_change_server_summary">Disconnect and connect to a different Supabase project</string>
+    <string name="settings_change_server_title">Change server?</string>
+    <string name="settings_change_server_message">You will be signed out and need to connect to a server again. The notes saved on this device are removed.</string>
+    <string name="settings_continue">Continue</string>
+    <string name="settings_import_title">Import notes?</string>
+    <plurals name="settings_import_message">
+        <item quantity="one">Add %1$d note from this file to your account? Importing the same file again adds it again.</item>
+        <item quantity="other">Add %1$d notes from this file to your account? Importing the same file again adds them again.</item>
+    </plurals>
+    <string name="settings_exporting">Exporting notes…</string>
+    <string name="settings_importing">Importing notes…</string>
+    <string name="settings_export_done">Notes exported</string>
+    <string name="settings_export_failed">Couldn\'t export your notes</string>
+    <string name="settings_nothing_to_export">Nothing to export</string>
+    <string name="settings_import_invalid">That file isn\'t a Writa backup</string>
+    <string name="settings_import_unsupported">That backup was made by a newer version of Writa</string>
+    <string name="settings_import_failed">Couldn\'t import the notes. Check your connection and try again.</string>
+    <plurals name="settings_import_done">
+        <item quantity="one">Imported %1$d note</item>
+        <item quantity="other">Imported %1$d notes</item>
+    </plurals>
+    <string name="settings_import_partial">Import stopped after %1$d of %2$d notes because of an error</string>
+
     <string name="archive_title">Archive</string>
     <string name="archive_empty">No archived notes</string>
     <string name="archive_unarchive">Unarchive</string>

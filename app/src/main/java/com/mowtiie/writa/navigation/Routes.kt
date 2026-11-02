@@ -12,6 +12,9 @@ data object LoginRoute
 data object NotesRoute
 
 @Serializable
+data object SettingsRoute
+
+@Serializable
 data object ArchiveRoute
 
 @Serializable

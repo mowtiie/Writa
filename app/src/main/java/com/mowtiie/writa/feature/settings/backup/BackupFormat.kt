@@ -199,4 +199,7 @@ class BackupFormat
 abstract class BackupModule {
     @Binds
     abstract fun bindBackupCodec(format: BackupFormat): BackupCodec
+
+    @Binds
+    abstract fun bindDocumentOpener(documents: ContentResolverDocuments): DocumentOpener
 }

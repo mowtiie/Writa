@@ -1,6 +1,8 @@
 package com.mowtiie.writa.navigation
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import androidx.compose.ui.test.performClick
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalLayoutApi::class)
 class WritaNavHostTest {
     @get:Rule
     val rule = createComposeRule()
@@ -31,7 +34,7 @@ class WritaNavHostTest {
                 setup = { Text("setup", Modifier.testTag(SETUP)) },
                 login = { Text("login", Modifier.testTag(LOGIN)) },
                 notes = { navigation ->
-                    Column {
+                    FlowRow {
                         Text("notes", Modifier.testTag(NOTES))
                         Button(
                             onClick = navigation.onOpenArchive,
@@ -41,6 +44,10 @@ class WritaNavHostTest {
                             onClick = navigation.onOpenTrash,
                             modifier = Modifier.testTag(OPEN_TRASH),
                         ) { Text("trash") }
+                        Button(
+                            onClick = navigation.onOpenSettings,
+                            modifier = Modifier.testTag(OPEN_SETTINGS),
+                        ) { Text("settings") }
                         Button(onClick = navigation.onCreateNote, modifier = Modifier.testTag(NEW_NOTE)) { Text("new") }
                         Button(onClick = { navigation.onOpenNote(OPENED_ID) }, modifier = Modifier.testTag(OPEN_NOTE)) {
                             Text("open")
@@ -54,6 +61,12 @@ class WritaNavHostTest {
                             Text("open")
                         }
                         Button(onClick = navigation.onBack, modifier = Modifier.testTag(BACK)) { Text("back") }
+                    }
+                },
+                settings = { onBack ->
+                    Column {
+                        Text("settings", Modifier.testTag(SETTINGS))
+                        Button(onClick = onBack, modifier = Modifier.testTag(BACK)) { Text("back") }
                     }
                 },
                 trash = { onBack ->
@@ -278,6 +291,27 @@ class WritaNavHostTest {
         assertOnly(LOGIN)
     }
 
+    @Test
+    fun theSettingsOpenFromTheNotesAndBackReturns() {
+        show(AuthState.SignedIn)
+
+        rule.onNodeWithTag(OPEN_SETTINGS).performClick()
+        assertOnly(SETTINGS)
+
+        rule.onNodeWithTag(BACK).performClick()
+        assertOnly(NOTES)
+    }
+
+    @Test
+    fun forgettingTheServerFromTheSettingsMovesStraightToSetup() {
+        show(AuthState.SignedIn)
+        rule.onNodeWithTag(OPEN_SETTINGS).performClick()
+
+        change(AuthState.NotConfigured)
+
+        assertOnly(SETUP)
+    }
+
     private companion object {
         const val SETUP = "setup"
         const val LOGIN = "login"
@@ -285,6 +319,8 @@ class WritaNavHostTest {
         const val EDITOR = "editor"
         const val ARCHIVE = "archive"
         const val TRASH = "trash"
+        const val SETTINGS = "settings"
+        const val OPEN_SETTINGS = "open-settings"
         const val OPEN_ARCHIVE = "open-archive"
         const val OPEN_TRASH = "open-trash"
         const val BACK = "back"

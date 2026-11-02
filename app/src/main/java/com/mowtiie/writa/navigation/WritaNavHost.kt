@@ -14,6 +14,7 @@ import com.mowtiie.writa.feature.auth.LoginDestination
 import com.mowtiie.writa.feature.editor.EditorDestination
 import com.mowtiie.writa.feature.notes.list.NotesDestination
 import com.mowtiie.writa.feature.notes.list.NotesNavigation
+import com.mowtiie.writa.feature.settings.SettingsDestination
 import com.mowtiie.writa.feature.setup.SetupDestination
 import com.mowtiie.writa.feature.trash.TrashDestination
 
@@ -37,6 +38,7 @@ fun WritaNavHost(
     editor: @Composable (onClose: () -> Unit) -> Unit = { EditorDestination(onClose = it) },
     archive: @Composable (ArchiveNavigation) -> Unit = { ArchiveDestination(it.onOpenNote, it.onBack) },
     trash: @Composable (onBack: () -> Unit) -> Unit = { TrashDestination(onBack = it) },
+    settings: @Composable (onBack: () -> Unit) -> Unit = { SettingsDestination(onBack = it) },
 ) {
     if (authState == null) return
 
@@ -52,6 +54,7 @@ fun WritaNavHost(
                     onCreateNote = { navController.navigate(EditorRoute()) },
                     onOpenArchive = { navController.navigate(ArchiveRoute) },
                     onOpenTrash = { navController.navigate(TrashRoute) },
+                    onOpenSettings = { navController.navigate(SettingsRoute) },
                 ),
             )
         }
@@ -65,6 +68,7 @@ fun WritaNavHost(
             )
         }
         composable<TrashRoute> { trash { navController.popBackStack() } }
+        composable<SettingsRoute> { settings { navController.popBackStack() } }
     }
     LaunchedEffect(authState) { navController.show(authState) }
 }

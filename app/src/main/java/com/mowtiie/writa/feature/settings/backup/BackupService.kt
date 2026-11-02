@@ -1,6 +1,7 @@
 package com.mowtiie.writa.feature.settings.backup
 
 import com.mowtiie.writa.core.di.IoDispatcher
+import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.NoteRepository
 import com.mowtiie.writa.feature.notes.remote.NoteRemoteDataSource
 import com.mowtiie.writa.feature.notes.remote.PartialImportException
@@ -29,10 +30,12 @@ class BackupService
         private val clock: Clock,
         @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     ) {
+        /** How many notes an export would contain. */
+        suspend fun exportableCount(): Int = exportable().size
+
         /** Writes every note that is not in the trash, archived ones included. */
         suspend fun export(out: OutputStream) {
-            val all = notes.observeActive().first() + notes.observeArchived().first()
-            val backup = BackupRules.selectForExport(all).map(BackupRules::toBackupNote)
+            val backup = exportable().map(BackupRules::toBackupNote)
             withContext(ioDispatcher) { codec.write(out, backup, clock.instant()) }
         }
 
@@ -55,6 +58,9 @@ class BackupService
             notes.refresh()
             return imported
         }
+
+        private suspend fun exportable(): List<Note> =
+            BackupRules.selectForExport(notes.observeActive().first() + notes.observeArchived().first())
 
         fun suggestedFileName(): String = "writa_backup_${FILE_STAMP.format(clock.instant())}.json"
 
