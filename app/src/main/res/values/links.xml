@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="developer_email" translatable="false">mowtiie.dev@gmail.com</string>
+    <string name="url_source_code" translatable="false">https://github.com/mowtiie/Writa</string>
+    <string name="url_author" translatable="false">https://github.com/mowtiie</string>
+    <string name="url_support" translatable="false">https://ko-fi.com/mowtiie</string>
+</resources>

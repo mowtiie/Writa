@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.mowtiie.writa.feature.about.AboutDestination
 import com.mowtiie.writa.feature.archive.ArchiveDestination
 import com.mowtiie.writa.feature.auth.LoginDestination
 import com.mowtiie.writa.feature.editor.EditorDestination
@@ -39,6 +40,7 @@ fun WritaNavHost(
     archive: @Composable (ArchiveNavigation) -> Unit = { ArchiveDestination(it.onOpenNote, it.onBack) },
     trash: @Composable (onBack: () -> Unit) -> Unit = { TrashDestination(onBack = it) },
     settings: @Composable (onBack: () -> Unit) -> Unit = { SettingsDestination(onBack = it) },
+    about: @Composable (onBack: () -> Unit) -> Unit = { AboutDestination(onBack = it) },
 ) {
     if (authState == null) return
 
@@ -55,6 +57,7 @@ fun WritaNavHost(
                     onOpenArchive = { navController.navigate(ArchiveRoute) },
                     onOpenTrash = { navController.navigate(TrashRoute) },
                     onOpenSettings = { navController.navigate(SettingsRoute) },
+                    onOpenAbout = { navController.navigate(AboutRoute) },
                 ),
             )
         }
@@ -69,6 +72,7 @@ fun WritaNavHost(
         }
         composable<TrashRoute> { trash { navController.popBackStack() } }
         composable<SettingsRoute> { settings { navController.popBackStack() } }
+        composable<AboutRoute> { about { navController.popBackStack() } }
     }
     LaunchedEffect(authState) { navController.show(authState) }
 }

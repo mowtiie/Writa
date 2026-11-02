@@ -20,6 +20,32 @@ val localProperties = loadProperties("local.properties")
 val keystoreProperties = loadProperties("keystore.properties")
 val hasReleaseKeystore = rootProject.file("keystore.properties").exists()
 
+// The setup SQL is shipped inside the app so the "update your database" screen can offer it: one file, no copy to keep in sync.
+abstract class CopySchemaAsset : DefaultTask() {
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val schema: RegularFileProperty
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        schema.get().asFile.copyTo(outputDir.get().file("schema.sql").asFile, overwrite = true)
+    }
+}
+
+val copySchemaAsset =
+    tasks.register<CopySchemaAsset>("copySchemaAsset") {
+        schema.set(rootProject.layout.projectDirectory.file("schema.sql"))
+    }
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(copySchemaAsset, CopySchemaAsset::outputDir)
+    }
+}
+
 android {
     namespace = "com.mowtiie.writa"
     compileSdk {

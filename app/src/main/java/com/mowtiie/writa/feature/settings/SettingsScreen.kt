@@ -55,6 +55,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
 import com.mowtiie.writa.core.datastore.Theme
 import com.mowtiie.writa.core.ui.CollectEvents
+import com.mowtiie.writa.core.ui.PreferenceCategory
+import com.mowtiie.writa.core.ui.PreferenceMinHeight
+import com.mowtiie.writa.core.ui.PreferenceRow
+import com.mowtiie.writa.core.ui.SwitchPreference
 import com.mowtiie.writa.core.ui.theme.Contrast
 
 /** What the user can do on the settings screen. */
@@ -152,13 +156,13 @@ fun SettingsScreen(
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Column(Modifier.padding(padding).fillMaxSize().verticalScroll(rememberScrollState())) {
-            Category(R.string.settings_appearance)
-            Preference(
+            PreferenceCategory(R.string.settings_appearance)
+            PreferenceRow(
                 title = stringResource(R.string.settings_theme),
                 summary = stringResource(themeLabel(state.settings.theme)),
                 onClick = { dialog = SettingsDialog.Theme },
             )
-            Preference(
+            PreferenceRow(
                 title = stringResource(R.string.settings_contrast),
                 summary = stringResource(contrastLabel(state.settings.contrast)),
                 onClick = { dialog = SettingsDialog.Contrast },
@@ -172,7 +176,7 @@ fun SettingsScreen(
                 )
             }
 
-            Category(R.string.settings_security)
+            PreferenceCategory(R.string.settings_security)
             SwitchPreference(
                 title = stringResource(R.string.settings_screen_privacy),
                 summary = stringResource(R.string.settings_screen_privacy_summary),
@@ -180,20 +184,20 @@ fun SettingsScreen(
                 onCheckedChange = actions.onScreenPrivacyChange,
             )
 
-            Category(R.string.settings_backup)
-            Preference(
+            PreferenceCategory(R.string.settings_backup)
+            PreferenceRow(
                 title = stringResource(R.string.settings_import),
                 summary = stringResource(R.string.settings_import_summary),
                 onClick = actions.onImport,
             )
-            Preference(
+            PreferenceRow(
                 title = stringResource(R.string.settings_export),
                 summary = stringResource(R.string.settings_export_summary),
                 onClick = actions.onExport,
             )
 
-            Category(R.string.settings_configuration)
-            Preference(
+            PreferenceCategory(R.string.settings_configuration)
+            PreferenceRow(
                 title = stringResource(R.string.settings_change_server),
                 summary = stringResource(R.string.settings_change_server_summary),
                 onClick = { dialog = SettingsDialog.ChangeServer },
@@ -246,84 +250,6 @@ fun SettingsScreen(
 private enum class SettingsDialog { Theme, Contrast, ChangeServer }
 
 @Composable
-private fun Category(title: Int) {
-    Text(
-        text = stringResource(title),
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.primary,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 8.dp)
-                .semantics { heading() },
-    )
-}
-
-@Composable
-private fun Preference(
-    title: String,
-    summary: String,
-    onClick: () -> Unit,
-) {
-    ClickableRow(onClick) { PreferenceText(title, summary, Modifier.weight(1f)) }
-}
-
-@Composable
-private fun SwitchPreference(
-    title: String,
-    summary: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
-                .heightIn(min = PREFERENCE_MIN_HEIGHT)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-    ) {
-        PreferenceText(title, summary, Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = null)
-    }
-}
-
-@Composable
-private fun ClickableRow(
-    onClick: () -> Unit,
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .heightIn(min = PREFERENCE_MIN_HEIGHT)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-        content = content,
-    )
-}
-
-@Composable
-private fun PreferenceText(
-    title: String,
-    summary: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier) {
-        Text(title, style = MaterialTheme.typography.bodyLarge)
-        Text(
-            text = summary,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
-}
-
-@Composable
 private fun <T> ChoiceDialog(
     title: String,
     options: List<Pair<T, String>>,
@@ -349,7 +275,7 @@ private fun <T> ChoiceDialog(
                                         onSelect(value)
                                         onDismiss()
                                     },
-                                ).heightIn(min = PREFERENCE_MIN_HEIGHT),
+                                ).heightIn(min = PreferenceMinHeight),
                     ) {
                         RadioButton(selected = value == selected, onClick = null)
                         Text(label, modifier = Modifier.padding(start = 16.dp))
@@ -468,4 +394,3 @@ private fun messageText(message: SettingsMessage): String =
     }
 
 private const val BACKUP_MIME_TYPE = "application/json"
-private val PREFERENCE_MIN_HEIGHT = 56.dp

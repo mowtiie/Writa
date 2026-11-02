@@ -18,6 +18,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.mowtiie.writa.core.ui.applyScreenPrivacy
 import com.mowtiie.writa.core.ui.rememberBatterySaver
 import com.mowtiie.writa.core.ui.theme.WritaTheme
+import com.mowtiie.writa.feature.crash.CrashReportHost
 import com.mowtiie.writa.navigation.WritaNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.filterNotNull
@@ -45,6 +46,7 @@ class MainActivity : ComponentActivity() {
             }
             WritaTheme(contrast = current.contrast, darkTheme = darkTheme, dynamicColor = current.dynamicColor) {
                 WritaNavHost(authState)
+                CrashReportHost()
             }
         }
     }

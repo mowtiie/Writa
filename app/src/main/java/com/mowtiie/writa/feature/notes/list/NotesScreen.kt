@@ -157,7 +157,11 @@ fun NotesDestination(
                 onMessageShown = viewModel::onMessageShown,
             )
         }
-    NotesScreen(state, actions, navigation)
+    if (state.schemaOutdated) {
+        SchemaOutdatedDestination(onCheckAgain = viewModel::refresh)
+    } else {
+        NotesScreen(state, actions, navigation)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

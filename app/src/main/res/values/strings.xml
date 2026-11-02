@@ -91,6 +91,40 @@
         <item quantity="other">Offline. %1$d changes will upload when you are back online. Tap to try again.</item>
     </plurals>
 
+    <string name="crash_title">App has crashed</string>
+    <string name="crash_message">The app closed unexpectedly. You can help fix the issue by emailing the error report or saving it as a text file. The report can include technical details such as your server\'s hostname, so review it before sending.</string>
+    <string name="crash_email">Email report</string>
+    <string name="crash_save">Export to file</string>
+    <string name="crash_dismiss">Dismiss</string>
+    <string name="crash_email_subject">Writa crash report</string>
+    <string name="crash_email_chooser">Send report via…</string>
+    <string name="crash_saved">Crash report saved</string>
+    <string name="crash_save_failed">Couldn\'t save the crash report</string>
+    <string name="crash_no_email_app">No email app installed</string>
+
+    <string name="schema_title">Update your database</string>
+    <string name="schema_message">Your Supabase project is missing parts of the Writa setup. Copy the SQL below, run it once in the Supabase SQL editor, then check again.</string>
+    <string name="schema_copy">Copy SQL</string>
+    <string name="schema_copied">SQL copied</string>
+    <string name="schema_sql_label">Writa setup SQL</string>
+    <string name="schema_check_again">Check again</string>
+    <string name="schema_loading">Loading…</string>
+    <string name="schema_unreadable">The SQL could not be read. Use the schema.sql file from the Writa repository.</string>
+
+    <string name="about_title">About</string>
+    <string name="about_license">License</string>
+    <string name="about_license_name">GNU General Public License v3.0</string>
+    <string name="about_license_unreadable">The license text could not be read.</string>
+    <string name="about_source_code">Source code</string>
+    <string name="about_source_code_summary">Check the GitHub repository and the README</string>
+    <string name="about_support">Support the developer</string>
+    <string name="about_support_summary">If you enjoy using Writa, you can support its development</string>
+    <string name="about_author">Author</string>
+    <string name="about_author_name">mowtiie</string>
+    <string name="about_version">Version</string>
+    <string name="about_close">Close</string>
+    <string name="about_easter_egg">You came here to check if there was something?</string>
+
     <string name="settings_title">Settings</string>
     <string name="settings_appearance">Appearance</string>
     <string name="settings_theme">Theme</string>

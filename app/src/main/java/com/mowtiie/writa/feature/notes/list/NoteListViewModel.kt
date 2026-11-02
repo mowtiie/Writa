@@ -9,6 +9,7 @@ import com.mowtiie.writa.core.di.DefaultDispatcher
 import com.mowtiie.writa.feature.auth.AuthRepository
 import com.mowtiie.writa.feature.notes.NoteListQuery
 import com.mowtiie.writa.feature.notes.NoteRepository
+import com.mowtiie.writa.feature.notes.RefreshFailure
 import com.mowtiie.writa.feature.notes.RefreshState
 import com.mowtiie.writa.feature.notes.SearchableNotes
 import com.mowtiie.writa.feature.notes.Sort
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -52,6 +54,8 @@ data class NoteListUiState(
     val banner: NotesBanner? = null,
     val emptyReason: EmptyReason? = null,
     val pendingChanges: Int = 0,
+    /** The database lacks part of `schema.sql`; the notes are replaced by the update screen until it is fixed. */
+    val schemaOutdated: Boolean = false,
     val pendingDelete: PendingDelete? = null,
     val message: NoteListMessage? = null,
 )
@@ -110,14 +114,24 @@ class NoteListViewModel
         private val chrome: Flow<Chrome> =
             combine(search, searchOpen, sort, message, ::Chrome)
 
-        private val sync: Flow<Pair<RefreshState, Int>> =
-            combine(
-                repository.refreshState,
-                repository.observePendingCount(),
-            ) { refresh, pending -> refresh to pending }
+        /** Stays true while the schema is checked again, so the update screen does not flicker away and back. */
+        private val schemaOutdated: Flow<Boolean> =
+            repository.refreshState
+                .scan(false) { outdated, refresh ->
+                    when (refresh) {
+                        is RefreshState.Failed -> refresh.reason == RefreshFailure.SchemaOutdated
+                        RefreshState.Idle -> false
+                        RefreshState.Loading -> outdated
+                    }
+                }.distinctUntilChanged()
+
+        private val sync: Flow<Sync> =
+            combine(repository.refreshState, repository.observePendingCount(), schemaOutdated, ::Sync)
 
         val state: StateFlow<NoteListUiState> =
-            combine(listing, chrome, sync) { listing, chrome, (refresh, pendingChanges) ->
+            combine(listing, chrome, sync) { listing, chrome, sync ->
+                val refresh = sync.refresh
+                val pendingChanges = sync.pendingChanges
                 NoteListUiState(
                     items = listing.items,
                     isLoaded = true,
@@ -136,6 +150,7 @@ class NoteListViewModel
                             loadFailed = refresh is RefreshState.Failed,
                         ),
                     pendingChanges = pendingChanges,
+                    schemaOutdated = sync.schemaOutdated,
                     pendingDelete = listing.pendingDelete,
                     message = chrome.message,
                 )
@@ -314,6 +329,12 @@ class NoteListViewModel
         // ---------------------------- shaping the list ----------------------------
 
         /** The notes the user can see, and the swipe that is waiting out its undo period, which hid one of them. */
+        private class Sync(
+            val refresh: RefreshState,
+            val pendingChanges: Int,
+            val schemaOutdated: Boolean,
+        )
+
         private class Visible(
             val items: List<NoteListItem>,
             val pendingDelete: PendingDelete?,
