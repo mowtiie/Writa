@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mowtiie.writa.core.datastore.SettingsStore
 import com.mowtiie.writa.core.di.ApplicationScope
 import com.mowtiie.writa.core.di.DefaultDispatcher
+import com.mowtiie.writa.feature.auth.AuthRepository
 import com.mowtiie.writa.feature.notes.NoteListQuery
 import com.mowtiie.writa.feature.notes.NoteRepository
 import com.mowtiie.writa.feature.notes.RefreshState
@@ -50,6 +51,7 @@ data class NoteListUiState(
     val isRefreshing: Boolean = false,
     val banner: NotesBanner? = null,
     val emptyReason: EmptyReason? = null,
+    val pendingChanges: Int = 0,
     val pendingDelete: PendingDelete? = null,
     val message: NoteListMessage? = null,
 )
@@ -67,6 +69,7 @@ class NoteListViewModel
     constructor(
         private val savedState: SavedStateHandle,
         private val repository: NoteRepository,
+        private val auth: AuthRepository,
         private val settingsStore: SettingsStore,
         @ApplicationScope private val applicationScope: CoroutineScope,
         @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher,
@@ -124,7 +127,15 @@ class NoteListViewModel
                     sort = listing.sort,
                     isRefreshing = refresh is RefreshState.Loading,
                     banner = NotesBanner.of(refresh, pendingChanges),
-                    emptyReason = EmptyReason.of(true, listing.total, listing.items.size, listing.search),
+                    emptyReason =
+                        EmptyReason.of(
+                            isLoaded = true,
+                            totalNotes = listing.total,
+                            shown = listing.items.size,
+                            search = listing.search,
+                            loadFailed = refresh is RefreshState.Failed,
+                        ),
+                    pendingChanges = pendingChanges,
                     pendingDelete = listing.pendingDelete,
                     message = chrome.message,
                 )
@@ -213,6 +224,15 @@ class NoteListViewModel
 
         /** The screen is no longer in front: a note waiting out its undo period goes to the trash now. */
         fun onScreenStopped() = commitPendingDelete()
+
+        /** Ends the session and wipes the saved notes; a note still waiting out its undo period is not trashed. */
+        fun signOut() {
+            onUndo()
+            applicationScope.launch {
+                auth.signOut()
+                repository.clear()
+            }
+        }
 
         private fun commitPendingDelete() {
             val pending = pendingDelete.value ?: return

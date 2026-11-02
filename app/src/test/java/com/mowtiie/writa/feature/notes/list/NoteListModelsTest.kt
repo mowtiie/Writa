@@ -81,6 +81,22 @@ class NoteListModelsTest {
         assertEquals(EmptyReason.NoMatchForTags, EmptyReason.of(true, totalNotes = 4, shown = 0, search = "   "))
     }
 
+    @Test
+    fun aFailedLoadWithNothingSavedIsToldApartFromNoNotes() {
+        assertEquals(
+            EmptyReason.LoadFailed,
+            EmptyReason.of(true, totalNotes = 0, shown = 0, search = "", loadFailed = true),
+        )
+    }
+
+    @Test
+    fun aFailedLoadDoesNotHideSavedNotesThatDoNotMatch() {
+        assertEquals(
+            EmptyReason.NoMatchForTags,
+            EmptyReason.of(true, totalNotes = 4, shown = 0, search = "", loadFailed = true),
+        )
+    }
+
     // ---------------------------- dates ----------------------------
 
     private val dates = NoteDates(ZoneId.of("UTC"), Locale.US)

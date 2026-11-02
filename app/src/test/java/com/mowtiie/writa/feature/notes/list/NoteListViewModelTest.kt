@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModelStore
 import com.mowtiie.writa.core.database.DirtyMask
 import com.mowtiie.writa.core.datastore.SettingsStore
 import com.mowtiie.writa.core.datastore.testPreferences
+import com.mowtiie.writa.core.network.HttpClients
+import com.mowtiie.writa.core.network.apiJson
+import com.mowtiie.writa.feature.auth.AuthRepository
 import com.mowtiie.writa.feature.notes.Note
 import com.mowtiie.writa.feature.notes.NoteRepository
 import com.mowtiie.writa.feature.notes.NotesFixture
@@ -15,6 +18,7 @@ import com.mowtiie.writa.feature.notes.Sort
 import com.mowtiie.writa.feature.notes.SyncState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -27,6 +31,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.QueueDispatcher
@@ -88,7 +93,16 @@ class NoteListViewModelTest {
                     testPreferences(backgroundScope, File(folder.root, "settings.preferences_pb")),
                 )
         }
-        val viewModel = NoteListViewModel(saved, repository, settings, fixture.scope, dispatcher)
+        val auth =
+            AuthRepository(
+                fixture.backend.connectionStore,
+                fixture.backend.sessionStore,
+                HttpClients.plain(),
+                apiJson,
+                Dispatchers.IO,
+                fixture.scope,
+            )
+        val viewModel = NoteListViewModel(saved, repository, auth, settings, fixture.scope, dispatcher)
         backgroundScope.launch(UnconfinedTestDispatcher(scheduler)) { viewModel.state.collect {} }
         return viewModel
     }
@@ -112,6 +126,27 @@ class NoteListViewModelTest {
         "2026-11-01T10:00:00+00:00",
         deletedAt,
     )
+
+    @Test
+    fun signingOutEndsTheSessionAndWipesTheSavedNotes() =
+        runTest {
+            seed(note(1))
+            val viewModel = viewModel()
+            viewModel.loaded()
+
+            viewModel.signOut()
+
+            withContext(Dispatchers.Default) {
+                withTimeout(WAIT_MS) { while (fixture.backend.sessionStore.current() != null) delay(POLL_MS) }
+            }
+            assertEquals(
+                emptyList<Note>(),
+                viewModel.state
+                    .first { it.items.isEmpty() }
+                    .items
+                    .map { it.note },
+            )
+        }
 
     private fun seed(
         note: Note,
@@ -169,6 +204,7 @@ class NoteListViewModelTest {
     @Test
     fun anEmptyListSaysWhyItIsEmpty() =
         runTest {
+            server.enqueue(MockResponse().setBody("[]"))
             val viewModel = viewModel()
             assertEquals(EmptyReason.NoNotes, viewModel.state.first { it.isLoaded }.emptyReason)
 
@@ -181,6 +217,16 @@ class NoteListViewModelTest {
             val state = viewModel.state.first { it.emptyReason != null }
             assertEquals(EmptyReason.NoMatchForSearch("zzz"), state.emptyReason)
             assertTrue(state.items.isEmpty())
+        }
+
+    @Test
+    fun nothingSavedAndNothingFetchedSaysTheNotesCouldNotBeLoaded() =
+        runTest {
+            val viewModel = viewModel()
+
+            val state = viewModel.state.first { it.banner != null }
+
+            assertEquals(EmptyReason.LoadFailed, state.emptyReason)
         }
 
     @Test
@@ -770,5 +816,6 @@ class NoteListViewModelTest {
 
     private companion object {
         const val WAIT_MS = 10_000L
+        const val POLL_MS = 10L
     }
 }

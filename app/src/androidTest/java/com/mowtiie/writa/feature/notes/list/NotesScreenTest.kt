@@ -76,6 +76,7 @@ class NotesScreenTest {
             onMoveToTrash = { calls += "trash:$it" },
             onRetryFailed = { calls += "retry:$it" },
             onDiscardFailed = { calls += "discard:$it" },
+            onSignOut = { calls += "signOut" },
             onMessageShown = {
                 calls += "messageShown"
                 state = state.copy(message = null)
@@ -137,7 +138,7 @@ class NotesScreenTest {
     fun aPinnedNoteSaysSo() {
         show(stateWith(note(1, pinned = true), note(2)))
 
-        rule.onAllNodesWithText(text(R.string.notes_pinned)).assertCountEquals(1)
+        rule.onAllNodesWithContentDescription(text(R.string.notes_pinned)).assertCountEquals(1)
     }
 
     @Test
@@ -182,6 +183,7 @@ class NotesScreenTest {
                 EmptyReason.NoNotes to text(R.string.notes_empty),
                 EmptyReason.NoMatchForSearch("milk") to text(R.string.notes_empty_search, "milk"),
                 EmptyReason.NoMatchForTags to text(R.string.notes_empty_tags),
+                EmptyReason.LoadFailed to text(R.string.notes_empty_offline),
             )
         show()
 
@@ -196,6 +198,97 @@ class NotesScreenTest {
         show(NoteListUiState(isLoaded = false, emptyReason = null))
 
         rule.onAllNodesWithText(text(R.string.notes_empty)).assertCountEquals(0)
+    }
+
+    @Test
+    fun theLoadingStateShowsWhileTheNotesAreRead() {
+        show(NoteListUiState(isLoaded = false))
+
+        rule.onNodeWithText(text(R.string.notes_loading)).assertIsDisplayed()
+    }
+
+    @Test
+    fun loadingIsNotShownOnceTheNotesAreRead() {
+        show(NoteListUiState(isLoaded = true, emptyReason = EmptyReason.NoNotes))
+
+        rule.onAllNodesWithText(text(R.string.notes_loading)).assertCountEquals(0)
+    }
+
+    @Test
+    fun whenNothingCouldBeLoadedTheEmptyStateOffersToTryAgain() {
+        show(NoteListUiState(isLoaded = true, emptyReason = EmptyReason.LoadFailed))
+
+        rule.onNodeWithText(text(R.string.notes_retry)).performClick()
+
+        assertEquals(listOf("refresh"), calls)
+    }
+
+    @Test
+    fun otherEmptyStatesHaveNoRetryButton() {
+        show(NoteListUiState(isLoaded = true, emptyReason = EmptyReason.NoNotes))
+
+        rule.onAllNodesWithText(text(R.string.notes_retry)).assertCountEquals(0)
+    }
+
+    // ---------------------------- the toolbar ----------------------------
+
+    @Test
+    fun searchAndSortAreOnTheToolbarAndTheRestIsInTheMenu() {
+        show()
+
+        rule.onNodeWithContentDescription(text(R.string.notes_menu_search)).assertIsDisplayed()
+        rule.onNodeWithContentDescription(text(R.string.notes_menu_sort)).assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.notes_menu_archive)).assertCountEquals(0)
+
+        rule.onNodeWithContentDescription(text(R.string.notes_menu_more)).performClick()
+
+        for (
+        entry in
+        listOf(
+            R.string.notes_menu_archive,
+            R.string.notes_menu_trash,
+            R.string.notes_menu_settings,
+            R.string.notes_menu_about,
+            R.string.notes_menu_sign_out,
+        )
+        ) {
+            rule.onNodeWithText(text(entry)).assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun signingOutAsksFirstAndWarnsAboutUnsentChanges() {
+        show(NoteListUiState(isLoaded = true, pendingChanges = 3))
+
+        rule.onNodeWithContentDescription(text(R.string.notes_menu_more)).performClick()
+        rule.onNodeWithText(text(R.string.notes_menu_sign_out)).performClick()
+
+        rule.onNodeWithText(text(R.string.notes_sign_out_title)).assertIsDisplayed()
+        rule.onNodeWithText("3", substring = true).assertIsDisplayed()
+        assertTrue(calls.isEmpty())
+
+        rule.onAllNodesWithText(text(R.string.notes_menu_sign_out)).onFirst().performClick()
+
+        assertEquals(listOf("signOut"), calls)
+    }
+
+    @Test
+    fun cancellingTheSignOutConfirmationDoesNothing() {
+        show()
+
+        rule.onNodeWithContentDescription(text(R.string.notes_menu_more)).performClick()
+        rule.onNodeWithText(text(R.string.notes_menu_sign_out)).performClick()
+        rule.onNodeWithText(text(R.string.notes_confirm_cancel)).performClick()
+
+        assertTrue(calls.isEmpty())
+        rule.onAllNodesWithText(text(R.string.notes_sign_out_title)).assertCountEquals(0)
+    }
+
+    @Test
+    fun aCardShowsAtMostThreeTagsAndHowManyMoreThereAre() {
+        show(stateWith(note(1, tags = listOf("a", "b", "c", "d", "e"))))
+
+        rule.onNodeWithText("#a  #b  #c  " + text(R.string.notes_more_tags, 2)).assertIsDisplayed()
     }
 
     // ---------------------------- the banner ----------------------------
@@ -354,8 +447,7 @@ class NotesScreenTest {
     fun sortOpensADialogWithTheCurrentChoiceSelectedAndChoosingApplies() {
         show(NoteListUiState(isLoaded = true, sort = Sort.OLDEST))
 
-        rule.onNodeWithContentDescription(text(R.string.notes_menu_more)).performClick()
-        rule.onNodeWithText(text(R.string.notes_menu_sort)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.notes_menu_sort)).performClick()
 
         rule.onNodeWithText(text(R.string.notes_sort_title)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.notes_sort_oldest)).assertIsSelected()

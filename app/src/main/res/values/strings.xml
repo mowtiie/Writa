@@ -29,6 +29,7 @@
 
     <string name="notes_search_hint">Search notes</string>
     <string name="notes_search_close">Close search</string>
+    <string name="notes_search_clear">Clear search</string>
     <string name="notes_menu_search">Search</string>
     <string name="notes_menu_more">More options</string>
     <string name="notes_menu_sort">Sort</string>
@@ -47,7 +48,7 @@
     <string name="notes_empty">No notes yet. Tap + to add one</string>
     <string name="notes_empty_search">No notes match \"%1$s\"</string>
     <string name="notes_empty_tags">No notes with the selected tags</string>
-    <string name="notes_loading">Loading notes</string>
+    <string name="notes_loading">Loading notes…</string>
     <string name="notes_pinned">Pinned</string>
     <string name="notes_edited">Edited %1$s</string>
     <string name="notes_sync_pending">Waiting to sync</string>
@@ -73,6 +74,16 @@
     <string name="notes_banner_unavailable">Showing saved notes. Your connection isn\'t set up. Tap to try again.</string>
     <string name="notes_banner_schema">Showing saved notes. Your database is missing newer columns. Run the updated schema.sql in the Supabase SQL editor, then tap to check again.</string>
     <string name="notes_banner_other">Showing saved notes. Something went wrong. Tap to try again.</string>
+    <string name="notes_menu_sign_out">Sign out</string>
+    <string name="notes_sign_out_title">Sign out?</string>
+    <string name="notes_sign_out_message">You will need to sign in again to see your notes.</string>
+    <plurals name="notes_sign_out_unsent">
+        <item quantity="one">%1$d change has not been uploaded yet. Continuing will discard it.</item>
+        <item quantity="other">%1$d changes have not been uploaded yet. Continuing will discard them.</item>
+    </plurals>
+    <string name="notes_more_tags">+%1$d</string>
+    <string name="notes_empty_offline">Couldn\'t load your notes. Check your connection and try again.</string>
+    <string name="notes_retry">Try again</string>
     <plurals name="notes_banner_unsent">
         <item quantity="one">Offline. %1$d change will upload when you are back online. Tap to try again.</item>
         <item quantity="other">Offline. %1$d changes will upload when you are back online. Tap to try again.</item>

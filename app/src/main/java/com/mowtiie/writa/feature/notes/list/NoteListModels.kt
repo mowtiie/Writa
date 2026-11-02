@@ -61,6 +61,9 @@ sealed interface EmptyReason {
 
     data object NoMatchForTags : EmptyReason
 
+    /** Nothing is saved on the device and the notes could not be fetched. */
+    data object LoadFailed : EmptyReason
+
     companion object {
         /** Null while the notes are still loading, and whenever there is something to show. */
         fun of(
@@ -68,9 +71,11 @@ sealed interface EmptyReason {
             totalNotes: Int,
             shown: Int,
             search: String,
+            loadFailed: Boolean = false,
         ): EmptyReason? =
             when {
                 !isLoaded || shown > 0 -> null
+                totalNotes == 0 && loadFailed -> LoadFailed
                 totalNotes == 0 -> NoNotes
                 search.isNotBlank() -> NoMatchForSearch(search.trim())
                 else -> NoMatchForTags
