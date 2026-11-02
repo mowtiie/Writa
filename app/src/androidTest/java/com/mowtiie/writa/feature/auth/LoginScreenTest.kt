@@ -26,7 +26,9 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
@@ -145,6 +147,18 @@ class LoginScreenTest {
             ContentType.Password,
             passwordField().fetchSemanticsNode().config.getOrNull(SemanticsProperties.ContentType),
         )
+    }
+
+    @Test
+    fun theEmailCanBeClearedOnceItHasText() {
+        show()
+        rule.onAllNodesWithContentDescription(text(R.string.field_clear)).assertCountEquals(0)
+
+        emailField().performTextInput("me@example.com")
+        rule.onNodeWithContentDescription(text(R.string.field_clear)).performClick()
+
+        assertEquals("", state.email)
+        rule.onAllNodesWithContentDescription(text(R.string.field_clear)).assertCountEquals(0)
     }
 
     // ---------------------------- input ----------------------------
@@ -402,6 +416,6 @@ class LoginScreenTest {
 
     private companion object {
         const val WAIT_MS = 10_000L
-        val NARROW_WIDTH = 150.dp
+        val NARROW_WIDTH = 200.dp
     }
 }

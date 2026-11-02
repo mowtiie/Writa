@@ -1,17 +1,12 @@
 package com.mowtiie.writa.feature.auth
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -30,12 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.contentType
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -46,8 +42,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mowtiie.writa.R
+import com.mowtiie.writa.core.ui.CenteredForm
+import com.mowtiie.writa.core.ui.ClearTextButton
 import com.mowtiie.writa.core.ui.CollectEvents
 import com.mowtiie.writa.core.ui.FilterObscuredTouches
+import com.mowtiie.writa.core.ui.FormProgress
 import com.mowtiie.writa.core.ui.submitOnHardwareEnter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -100,18 +99,12 @@ fun LoginScreen(
     Scaffold(snackbarHost = {
         SnackbarHost(snackbarHost)
     }, containerColor = MaterialTheme.colorScheme.background) { padding ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
+        CenteredForm(Modifier.padding(padding)) {
             Text(
                 text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.displayMedium,
+                fontFamily = FontFamily.Serif,
+                color = MaterialTheme.colorScheme.primary,
                 maxLines = 1,
                 softWrap = false,
                 autoSize = TextAutoSize.StepBased(minFontSize = MIN_TITLE_SIZE, maxFontSize = MAX_TITLE_SIZE),
@@ -121,8 +114,10 @@ fun LoginScreen(
             Text(
                 text = stringResource(R.string.app_slogan),
                 style = MaterialTheme.typography.titleMedium,
+                fontFamily = FontFamily.Serif,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.padding(top = 12.dp, bottom = 24.dp).fillMaxWidth(),
             )
 
             val emailError = state.emailProblem?.let { emailMessage(it) }
@@ -132,6 +127,13 @@ fun LoginScreen(
                 label = { Text(stringResource(R.string.login_email_label)) },
                 isError = emailError != null,
                 supportingText = emailError?.let { { Text(it) } },
+                leadingIcon = { Icon(painterResource(R.drawable.ic_mail), contentDescription = null) },
+                trailingIcon =
+                    if (state.email.isNotEmpty() && !state.isLoading) {
+                        { ClearTextButton { onEmailChange("") } }
+                    } else {
+                        null
+                    },
                 singleLine = true,
                 enabled = !state.isLoading,
                 keyboardOptions =
@@ -143,6 +145,7 @@ fun LoginScreen(
                 keyboardActions = KeyboardActions(onNext = { passwordFocus.requestFocus() }),
                 modifier =
                     Modifier
+                        .padding(bottom = 16.dp)
                         .fillMaxWidth()
                         .focusRequester(emailFocus)
                         .semantics {
@@ -159,6 +162,7 @@ fun LoginScreen(
                 label = { Text(stringResource(R.string.login_password_label)) },
                 isError = passwordError != null,
                 supportingText = passwordError?.let { { Text(it) } },
+                leadingIcon = { Icon(painterResource(R.drawable.ic_lock), contentDescription = null) },
                 singleLine = true,
                 enabled = !state.isLoading,
                 visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
@@ -189,11 +193,12 @@ fun LoginScreen(
                         },
             )
 
-            if (state.isLoading) {
-                val working = stringResource(R.string.login_working)
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().semantics { contentDescription = working })
-            }
-            Button(onClick = onSignIn, enabled = !state.isLoading, modifier = Modifier.fillMaxWidth()) {
+            FormProgress(state.isLoading, stringResource(R.string.login_working), Modifier.padding(top = 16.dp))
+            Button(
+                onClick = onSignIn,
+                enabled = !state.isLoading,
+                modifier = Modifier.padding(top = 16.dp, bottom = 4.dp).fillMaxWidth(),
+            ) {
                 Text(stringResource(R.string.login_sign_in))
             }
             TextButton(onClick = onCreateAccount, enabled = !state.isLoading, modifier = Modifier.fillMaxWidth()) {
@@ -204,8 +209,9 @@ fun LoginScreen(
                 Text(
                     text = stringResource(R.string.login_server, host),
                     style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.padding(top = 24.dp).fillMaxWidth(),
                 )
             }
             TextButton(onClick = onChangeServer, enabled = !state.isLoading, modifier = Modifier.fillMaxWidth()) {

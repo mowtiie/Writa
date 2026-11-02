@@ -7,6 +7,8 @@
     <string name="setup_description">Create a free Supabase project, run the setup SQL from the README, then paste your Project URL and publishable (anon) key below.</string>
     <string name="setup_url_label">Server URL</string>
     <string name="setup_key_label">Publishable key</string>
+    <string name="setup_url_helper">e.g. https://yourproject.supabase.co</string>
+    <string name="field_clear">Clear text</string>
     <string name="setup_connect">Connect</string>
     <string name="setup_connecting">Connecting</string>
 

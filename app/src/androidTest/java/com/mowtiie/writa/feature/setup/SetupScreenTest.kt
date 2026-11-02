@@ -20,6 +20,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -116,6 +117,31 @@ class SetupScreenTest {
 
         urlField().assert(hasText("https://dev.supabase.co", substring = true))
         keyField().assert(hasText("dev-key", substring = true))
+    }
+
+    @Test
+    fun theUrlFieldShowsAnExampleUntilThereIsAProblem() {
+        show()
+
+        rule.onNodeWithText(text(R.string.setup_url_helper)).assertIsDisplayed()
+
+        state = state.copy(urlProblem = UrlProblem.Invalid)
+
+        rule.onAllNodesWithText(text(R.string.setup_url_helper)).assertCountEquals(0)
+        rule.onNodeWithText(text(R.string.error_server_url_invalid)).assertIsDisplayed()
+    }
+
+    @Test
+    fun eachFieldCanBeClearedOnceItHasText() {
+        show(SetupUiState(url = "https://dev.supabase.co", key = "dev-key"))
+
+        rule.onAllNodesWithContentDescription(text(R.string.field_clear)).assertCountEquals(2)
+        rule.onAllNodesWithContentDescription(text(R.string.field_clear))[0].performClick()
+        rule.onAllNodesWithContentDescription(text(R.string.field_clear))[0].performClick()
+
+        assertEquals("", state.url)
+        assertEquals("", state.key)
+        rule.onAllNodesWithContentDescription(text(R.string.field_clear)).assertCountEquals(0)
     }
 
     // ---------------------------- input ----------------------------
