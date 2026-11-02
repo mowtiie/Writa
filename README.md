@@ -51,7 +51,19 @@ To use another server later, go to **Settings → Change server**.
 
 ## Verifying a download
 
-Each release has a detached PGP signature (`.asc`), which confirms that I published that exact file. Import my key and check that the fingerprint matches before trusting it:
+Release APKs on GitHub are signed with my key. Verify one with [apksigner](https://developer.android.com/studio/command-line/apksigner.html#options-verify):
+
+```
+apksigner verify --print-certs --verbose writa-vX.X.apk
+```
+
+It should report `Verifies`, with the certificate `CN=Mowtiie` and this SHA-256 digest. Only install APKs signed with this key:
+
+```
+8b6751f3c33185635f989530b6c073a1397b3d412befae6906a2eb5845d2de63
+```
+
+Each release also has a detached PGP signature (`.asc`), which confirms that I published that exact file. Import my key and check that the fingerprint matches before trusting it:
 
 ```
 curl -O https://mowtiie.cc/PGP_PUBLIC_KEY.asc
