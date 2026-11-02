@@ -77,9 +77,11 @@ fun WritaNavHost(
     LaunchedEffect(authState) { navController.show(authState) }
 }
 
+/** Moves to the start of [state] unless the screen already showing belongs to it, as it does after a recreation. */
 private fun NavController.show(state: AuthState) {
     val target = state.route
-    if (currentDestination?.hasRoute(target::class) == true) return
+    val showing = currentDestination
+    if (showing != null && state.screens.any { showing.hasRoute(it) }) return
     navigate(target) {
         popUpTo(graph.id) { inclusive = true }
         launchSingleTop = true

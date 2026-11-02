@@ -3,6 +3,7 @@ package com.mowtiie.writa.navigation
 import com.mowtiie.writa.core.datastore.Connection
 import com.mowtiie.writa.core.security.Session
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AuthStateTest {
@@ -34,6 +35,25 @@ class AuthStateTest {
         assertEquals(SetupRoute, AuthState.NotConfigured.route)
         assertEquals(LoginRoute, AuthState.SignedOut.route)
         assertEquals(NotesRoute, AuthState.SignedIn.route)
+    }
+
+    @Test
+    fun eachStateStartsOnItsFirstScreen() {
+        for (state in AuthState.entries) {
+            assertEquals(state.route::class, state.screens.first())
+        }
+    }
+
+    @Test
+    fun onlyASignedInUserMayBeOnTheNoteScreens() {
+        val noteScreens =
+            listOf(EditorRoute::class, ArchiveRoute::class, TrashRoute::class, SettingsRoute::class, AboutRoute::class)
+
+        assertTrue(AuthState.SignedIn.screens.containsAll(noteScreens + NotesRoute::class))
+        for (state in listOf(AuthState.NotConfigured, AuthState.SignedOut)) {
+            assertEquals(1, state.screens.size)
+            assertTrue(noteScreens.none { it in state.screens })
+        }
     }
 
     @Test

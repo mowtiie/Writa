@@ -151,6 +151,22 @@ class NoteRepositoryTest {
     }
 
     @Test
+    fun aRefreshWhileARefusedUploadIsStillBeingAnsweredSharesItsPassAndKeepsTheNote() {
+        server.enqueue(MockResponse().setResponseCode(503).setHeadersDelay(SLOW_ANSWER_MS, TimeUnit.MILLISECONDS))
+        val offline = runBlocking { repository.create("mine", "body", emptyList(), pinned = false) }
+        awaitCount(1)
+        server.takeRequest()
+        server.enqueue(list(row(77)))
+
+        refresh()
+
+        assertEquals("GET", awaitRequest().method)
+        assertEquals(RefreshState.Idle, repository.refreshState.value)
+        assertEquals(setOf(offline.id, 77L), active().map { it.id }.toSet())
+        assertEquals(SyncState.Pending, active().single { it.id == offline.id }.syncState)
+    }
+
+    @Test
     fun refreshReplacesSyncedNotesAndDropsTheOnesTheServerNoLongerHas() {
         seedSynced(1, title = "old")
         seedSynced(2)
@@ -184,6 +200,9 @@ class NoteRepositoryTest {
         val offline = runBlocking { repository.create("mine", "body", emptyList(), pinned = false) }
         awaitCount(1) // the create above already started an upload, which the fail-fast answer refuses
         server.takeRequest()
+        // Let that refused attempt finish: a refresh that starts while it is still being answered shares its pass.
+        runBlocking { fixture.engine.sync() }
+        repeat(server.requestCount - 1) { server.takeRequest() }
         server.enqueue(list(row(55, title = "mine")))
         server.enqueue(list(row(55, title = "mine")))
 
@@ -576,6 +595,7 @@ class NoteRepositoryTest {
         const val WAIT_MS = 10_000L
         const val POLL_MS = 20L
         const val SLOW_MS = 300L
+        const val SLOW_ANSWER_MS = 400L
         const val SLOW_HEADERS_MS = 2_000L
         const val SHORT_WAIT_MS = 300L
     }
