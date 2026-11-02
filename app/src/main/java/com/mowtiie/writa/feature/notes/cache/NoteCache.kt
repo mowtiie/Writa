@@ -320,6 +320,10 @@ class NoteCache
         /** Forgets a note's local state and the note itself (it is gone on the server, or the user discarded it). */
         suspend fun syncDropped(id: Long) = locked { dao.delete(resolve(id)) }
 
+        /** Stores a note the server has just created for this device, at the top of the list. */
+        suspend fun addServerNote(server: Note) =
+            locked { dao.insert(codec.encode(server, (dao.minPosition() ?: 0) - 1)) }
+
         /** Throws away the local changes of a note and takes the server's version instead. */
         suspend fun replaceWithServer(
             id: Long,

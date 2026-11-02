@@ -211,7 +211,7 @@ class SyncEngine
                         pinned = false,
                         archived = false,
                     )
-                remote.create(insertOf(copy, clientIds.next()))
+                cache.addServerNote(remote.create(insertOf(copy, clientIds.next())).toNote())
                 cache.replaceWithServer(id, current.toNote())
             }
             return Outcome.Done

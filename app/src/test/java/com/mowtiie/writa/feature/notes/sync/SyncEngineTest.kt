@@ -301,6 +301,9 @@ class SyncEngineTest {
         assertEquals("their edit", original?.content)
         assertEquals(SyncState.Synced, original?.syncState)
         assertTrue(pending().isEmpty())
+        val storedCopy = runBlocking { cache.get(100) }
+        assertEquals("Title (conflict)", storedCopy?.title)
+        assertEquals(SyncState.Synced, storedCopy?.syncState)
     }
 
     @Test
